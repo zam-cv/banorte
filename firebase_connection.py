@@ -1,13 +1,19 @@
+
+
 import firebase_admin
 from firebase_admin import credentials, firestore
-import json
-
-
+from llm.CONSTS import PROJECT_ID
 # Initialize the Firebase Admin SDK
 def initialize_firebase():
-    # Path to your service account key file
-    cred = credentials.Certificate("auth.json")
-    firebase_admin.initialize_app(cred)
+    # Use the application default credentials
+    cred = credentials.ApplicationDefault()
+
+    firebase_admin.initialize_app(
+        cred, {
+        'projectId': PROJECT_ID,
+        'databaseURL': f"https://hack-banorte.firebaseio.com",
+        
+    })
 
 # Get Firestore client
 def get_firestore_client():
@@ -33,8 +39,8 @@ if __name__ == "__main__":
     initialize_firebase()
 
     # Example usage
-    collection_name = "users"
-    document_id = "user_123"
+    collection_name = "user_data"
+    document_id = "B0nDZBfLZrqkcT1eycX4"
     data = {
         "name": "John Doe",
         "email": "john.doe@example.com",
@@ -42,7 +48,7 @@ if __name__ == "__main__":
     }
 
     # Add data to Firestore
-    add_data(collection_name, document_id, data)
+    #add_data(collection_name, document_id, data)
 
     # Read data from Firestore
     read_data(collection_name, document_id)

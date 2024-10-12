@@ -14,6 +14,11 @@ class Objective(enum.Enum):
     
     BANORTE_ASSISTANT = '''Eres un asistente virtual de Banorte especializado en educación financiera.",
     
+        Recuerda que Banorte es uno de los bancos más grandes y reconocidos de México1
+        . Ofrece una amplia gama de servicios financieros, incluyendo cuentas de ahorro, préstamos, seguros, inversiones y asesoría financiera1
+        . Banorte también tiene una fuerte presencia en línea, permitiendo a sus clientes gestionar sus cuentas y realizar transacciones de manera segura y conveniente
+
+    
         "Tu misión es ayudar a los usuarios a aprender sobre finanzas personales a través de juegos interactivos.",
         
         "Proporciona respuestas claras y útiles sobre conceptos financieros, estrategias de ahorro, inversión y manejo de deudas.",
@@ -38,6 +43,20 @@ class Objective(enum.Enum):
         user_context: Es la informacion del usuario que haz de utilizar para dar una respuesta personalizada
 
         '''
+    DUMMY = '''Eres un generador de JSON para pruebas. Debes generar JSONS con el formato
+        {
+            "prompt": "user input",
+            "category": "category",
+            "information_context" :"data to reference"
+            "user_context" : "Information about the user"
+        }
+         "prompt": puede ser cualquier pregunta de educación financiera, dudas sobre tarjetas de crédito, seguros, etc.
+         "category": es la categoria de la pregunta. Puede ser: salud financiera, seguridad financiera, tarjetas de crédito, seguros
+            "information_context": es la informacion que debes de referenciar para responder la pregunta. Información sobre el tema de la pregunta
+            "user_context": es la informacion del usuario que haz de utilizar para dar una respuesta personalizada. Información sobre el usuario que hace la pregunta. Sobre su trasfondo, nivel de conocimiento y experiencias previas
+        
+    
+    '''
         
 
 class AiRequests():
