@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:app/screens/login.dart';
 import 'package:app/screens/signup.dart';
 import 'package:app/screens/forgot_password.dart';
+import 'package:app/screens/home.dart';
 
 class BaseLayout extends StatelessWidget {
   final Widget child;
@@ -41,11 +42,13 @@ class AppRoutes {
   static const String login = '/';
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
+  static const String home = '/home';
 
   static final Map<String, Widget> routes = {
     login: const Login(),
     signup: const Signup(),
     forgotPassword: const ForgotPassword(),
+    home: const Home(),
   };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {

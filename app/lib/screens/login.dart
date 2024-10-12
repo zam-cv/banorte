@@ -1,7 +1,9 @@
+import 'package:app/routes/app_routes.dart';
 import 'package:app/widgets/custom_button.dart';
 import 'package:app/widgets/custom_input.dart';
 import 'package:app/widgets/custom_input_password.dart';
 import 'package:app/widgets/degraded.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:app/widgets/custom_title.dart';
 import 'package:flutter_svg/svg.dart';
@@ -63,7 +65,10 @@ class Login extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, AppRoutes.forgotPassword);
+                            },
                             child: Text(
                               'Olvidé mi contraseña',
                               style: TextStyle(
@@ -80,28 +85,28 @@ class Login extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: RichText(
-                        text: const TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '¿No tienes cuenta?  ',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red, // Texto en rojo
-                              ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: '¿No tienes cuenta?  ',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
                             ),
-                            TextSpan(
-                              text: 'Regístrate',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.white, // Texto en blanco
-                              ),
+                          ),
+                          TextSpan(
+                            text: 'Regístrate',
+                            style: const TextStyle(
+                              color: Colors.white,
                             ),
-                          ],
-                        ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.pushNamed(context, AppRoutes.signup);
+                              },
+                          )
+                        ],
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -109,7 +114,9 @@ class Login extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: CustomButton(
                         text: 'Iniciar sesión',
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoutes.home);
+                        },
                       ),
                     ),
                   ],
