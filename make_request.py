@@ -2,14 +2,6 @@ import vertexai
 import enum
 from CONSTS import *
 
-
-class Objective(enum):
-    TRANSLATE = 1
-    SUMMARIZE = 2
-    SENTIMENT_ANALYSIS = 3
-    QUESTION_ANSWERING = 4
-    CODE_GENERATION = 5
-
 from vertexai.generative_models import (
     GenerationConfig,
     GenerativeModel,
@@ -17,32 +9,56 @@ from vertexai.generative_models import (
     HarmCategory
 )
 
-vertexai.init(project=PROJECT_ID, location=LOCATION)
+class Objective(enum.Enum):
+    TRANSLATE = "You are a helpful translator."
+    SUMMARIZE = "You are a helpful text summarizer."
+    SENTIMENT_ANALYSIS =  "You are a helpful sentiment analyzer."
+    QUESTION_ANSWERING = "You are a helpful question answerer."
+    CODE_GENERATION = "You are a helpful code generator."
+    TEXT_GENERATION = "You are a helpful text generator."
+    FINANCIAL_TEACHER = "YOU ARE A FINANCE TEACHER"
 
-
-def whoami(objective : Objective)->str:
+class AiRequests():
     
-    if objective==Objective.TRANSLATE:
-        return "You are a helpful text summarizer."
-    elif objective==Objective.SUMMARIZE:
-        return "You are a helpful text summarizer."
-    elif objective==Objective.SENTIMENT_ANALYSIS:
-        return "You are a helpful sentiment analyzer."
-    elif objective==Objective.QUESTION_ANSWERING:
-        return "You are a helpful question answerer."
-    elif objective==Objective.CODE_GENERATION:
-        return "You are a helpful code generator."
-    else:
-        return "You are a helpful language translator."
+    def __init__(self,objective : Objective,what_should_i_do : str) -> None:
+        vertexai.init(project=PROJECT_ID, location=LOCATION)
         
-def create_model(objective : Objective, prompt : str):
-    return GenerativeModel(
-    MODEL_ID,
-    system_instruction=[
-        whoami(objective),
-        prompt,
-    ],
-)
-    
-    
-    
+        self.model =  GenerativeModel(
+            MODEL_ID,
+            system_instruction=[
+                objective.value,
+                what_should_i_do,
+                ],
+            )
+        self.generation_config = GenerationConfig(
+            temperature=0.9,
+            top_p=1.0,
+            top_k=32,
+            candidate_count=1,
+            max_output_tokens=8192,
+        )
+        self.safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+        }
+        self.contents = []
+        
+    def make_prompt(self,prompt : str)->str:
+        prompt :str = f"""
+                User input: {prompt}.
+                Answer:
+                """
+        self.contents.append(prompt)
+        response = self.model.generate_content(
+            self.contents,
+            generation_config=self.generation_config,
+            safety_settings=self.safety_settings,
+            )
+        return response.text
+
+
+if __name__ == "__main__":
+    ai = AiRequests(Objective.TRANSLATE,"You must translate to spansih")
+    print(ai.make_prompt("I like bagels."))
