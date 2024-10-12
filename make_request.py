@@ -12,8 +12,33 @@ from vertexai.generative_models import (
 
 class Objective(enum.Enum):
     
-    BANORTE_ASSISTANT = "You are a helpful Banorte assistant. "
+    BANORTE_ASSISTANT = '''Eres un asistente virtual de Banorte especializado en educación financiera.",
     
+        "Tu misión es ayudar a los usuarios a aprender sobre finanzas personales a través de juegos interactivos.",
+        
+        "Proporciona respuestas claras y útiles sobre conceptos financieros, estrategias de ahorro, inversión y manejo de deudas.",
+        
+        "Asegúrate de que las explicaciones sean fáciles de entender y atractivas para los usuarios.",
+        
+        "Los usuarios podrán ser de todas las edades",
+        
+        "Es importante ayudar al usuario seguir aprendiendo sobre la educación financiera y dar nuevos conocimientos al usuario.
+        
+        Vas a recibir un JSON con la siguiente estructura:
+        {
+            "prompt": "user input",
+            "category": "category",
+            "information_context" :"data to reference"
+            "user_context" : "Information about the user"
+        }
+        
+        prompt: Es la pregunta que el usuario hace
+        category: Es la categoria de la pregunta, debes responder enfocandote en esta categoria
+        information_context: Es la informacion que debes de referenciar para responder la pregunta
+        user_context: Es la informacion del usuario que haz de utilizar para dar una respuesta personalizada
+
+        '''
+        
 
 class AiRequests():
     
@@ -69,21 +94,18 @@ class AiRequests():
             )
         return response.text 
     
-    def make_prompt_with_from_json(self,prompt:str, context:json)->str:
-        prompt :str = f"""
-                User input: {prompt}.
-                Answer:
-                """
+    def make_prompt_with_from_json(self, context:json)->str:
         data = json.loads(context)
-        category = data["category"]
-        document = data["document"]
-        history : list[str] = data["history"]
         
-        self.contents.append(category)
-        self.contents.append(document)
-        self.contents.append(history)
+        detailed_prompt = f"User input: {data["prompt"]}.\nContext:\n"
         
-        self.contents.append(prompt)
+        for key, value in data.items():
+            detailed_prompt += f"{key}: {value}\n"
+            
+        detailed_prompt += "Answer:"
+        
+        self.contents.append(detailed_prompt)
+        
         response = self.model.generate_content(
             self.contents,
             generation_config=self.generation_config,
@@ -94,5 +116,32 @@ class AiRequests():
 
 if __name__ == "__main__":
     ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spansih")
-    #print(ai.make_prompt("I like bagels."))
-    print(ai.make_prompt_with_context("What is financial health","Financial health is about the overall state of your personal finances. It includes having a balanced budget, a manageable level of debt, a good credit score, and an emergency fund. It also involves planning for the future through savings and investments, ensuring you can meet both your short-term and long-term financial goals. Maintaining good financial health means regularly reviewing and managing your finances to keep everything in check. It's like a fitness plan but for your money!"))
+    # Example JSON context
+    json_context = json.dumps(
+        {
+        "prompt": "¿Por qué es importante manejar bien mis finanzas?",
+        "category": "Financial Health",
+        "information_context": '''
+        Según Banorte, la salud financiera se refiere a la capacidad de una persona para administrar sus finanzas de manera efectiva, asegurando su bienestar económico a corto y largo plazo. Esto incluye la planificación del presupuesto, el ahorro, la inversión y la gestión de deudas1
+. Banorte ofrece diversos productos y servicios financieros diseñados para ayudar a sus clientes a mejorar su salud financiera, como cuentas de ahorro, préstamos, seguros y asesoría financiera personalizada1
+.
+
+Servicios de Banorte
+Cuentas de Ahorro: Ofrecen diferentes tipos de cuentas de ahorro con tasas de interés competitivas.
+
+Préstamos: Incluyen préstamos personales, hipotecas y préstamos comerciales.
+
+Seguros: Banorte ofrece una variedad de seguros, como seguros de vida, salud y hogar.
+
+Asesoría Financiera: Servicios personalizados para ayudar a los clientes a planificar y alcanzar sus objetivos financieros.
+
+Tarjetas de Crédito: Diferentes opciones de tarjetas de crédito con beneficios y recompensas.
+
+
+        
+        ''',
+        "user_context": "El usuario eduardo Chavez tiene 25 años y esta interesado en aprender sobre finanzas personales"
+    }
+    )
+    
+    print(ai.make_prompt_with_from_json(json_context))
