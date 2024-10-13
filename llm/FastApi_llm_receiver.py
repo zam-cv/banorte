@@ -41,11 +41,15 @@ class FastApiLLMReceiver():
     def generate_questions(self)->dict:
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
-            dict_pregunta = {
-                "question": pregunta[0],
-                "options": pregunta[1:5],
-                "correct_answer": pregunta[5]
-            }
+            while(len(pregunta)<5):
+                pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+                if len(pregunta) < 5:
+                    continue
+                dict_pregunta = {
+                    "question": pregunta[0],
+                    "options": pregunta[1:5],
+                    "correct_answer": pregunta[5]
+                }
            
             return dict_pregunta
         

@@ -209,15 +209,13 @@ class AiRequests():
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
         data = context
-        file = open('Output.txt', 'r', encoding='utf-8')
-        information = file.read()
-        
+        print("aaaaaaaaaaaaaaa")
+        print(data)
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
         for key, value in data.items():
             detailed_prompt += f"{key}: {value}\n"
             
-        detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
             
         detailed_prompt += "Answer:"
         
@@ -228,7 +226,7 @@ class AiRequests():
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
             )
-        file.close()
+
         return response.text
     
         # {
