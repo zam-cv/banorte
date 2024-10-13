@@ -32,11 +32,11 @@ def validate_json(json_string):
         return None
 
 if __name__ == "__main__":
-    ai = AiRequests(Objective.BANORTE_ASSISTANT, "You must give financial advice")
+    ai = AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice")
     for val in generate_dummy():
         print("----------")
         valid_data = validate_json(val)
         if valid_data:
             print(valid_data)
             # Uncomment the following line if you want to use the valid data with ai.make_prompt_with_from_json
-            print(ai.make_prompt_with_from_json(json.dumps(valid_data)))
+            print(ai.make_prompt_with_from_json_use_context(json.dumps(valid_data)))

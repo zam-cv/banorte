@@ -1,58 +1,87 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs')
+const fs = require('fs');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-var result = ""
-var result2 = ""
+async function scrapeBanorteNews() {
+    try {
+        const response = await axios.get('https://www.google.com/search?q=Banorte+news', {
+            headers: {
+                'User-Agent': 'Mozilla/5.0'
+            }
+        });
 
-async function scrapeDivs() {
+        const $ = cheerio.load(response.data);
+        const newsLinks = [];
+
+        $('a').each((index, element) => {
+            const link = $(element).attr('href');
+            if (link && link.includes('banorte')) {
+                newsLinks.push(`https://www.google.com${link}`);
+            }
+        });
+
+        return newsLinks;
+
+    } catch (error) {
+        console.error('Error fetching news:', error);
+        return [];
+    }
+}
+
+async function scrape(url) {
     const browser = await puppeteer.launch({
         args: ['--disable-http2'],
-        headless: false,
+        headless: false,  // Run in headless mode
         defaultViewport: null
     });
     const page = await browser.newPage();
-    await page.goto('https://www.banorte.com/wps/portal/gfb/Home/noticias-banorte/noticias-banorte-2024', { waitUntil: 'networkidle2' });
+    await page.goto(url, { waitUntil: 'networkidle2' });
 
-    const h2 = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('h2')).map(div => div.innerText);
-    });
-    const h3 = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('h3')).map(div => div.innerText);
-    });
-    const h4 = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('h4')).map(div => div.innerText);
-    });
-    const h5 = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('h5')).map(div => div.innerText);
-    });
-    const h6 = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll('h6')).map(div => div.innerText);
-    });
     const body = await page.evaluate(() => {
         return Array.from(document.querySelectorAll('body')).map(div => div.innerText);
     });
 
-
-
-
-    body.forEach((div, index) => {
-        result=" "+div;
-        
+    let result = "";
+    body.forEach((div) => {
+        result += " " + div;
     });
 
-    //result = result.replace(/\s+[\t\n]+/g, ' ');
     result = result.replace(/\s+/g, ' ');
     result = result.toLowerCase();
     console.log(result);
 
-    fs.writeFile('Output.txt', result, (err) => {
-
-        // In case of a error throw err.
-        if (err) throw err;
-    })
-
     await browser.close();
+    return result;
 }
 
-scrapeDivs();
+async function main() {
+    const newsLinks = await scrapeBanorteNews();
+    let result = "";
+    count = 0
 
+    for (const link of newsLinks) {
+        try {
+            result += await scrape(link);
+            count++;
+            if (count >= 15) {
+                break;
+            }
+        } catch (err) {
+            console.error(`Error scraping ${link}:`, err);
+        }
+    }
+
+    fs.appendFile('Output.txt', result, (err) => {
+        if (err) throw err;
+        console.log('Content appended to file.');
+    });
+
+    return result;
+}
+
+main().then((result) => {
+    console.log(result);
+}).catch((err) => {
+    console.error(err);
+});
