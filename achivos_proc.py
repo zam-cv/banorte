@@ -4,14 +4,18 @@ from pptx import Presentation
 import re
 import pytesseract
 import cv2
+import io
+import numpy as np
+from fastapi import FastAPI, File, UploadFile
+import uvicorn
 
-def archivo_procesado(archivo:str)->str:
-    # Función para identificar el tipo de archivo
+app = FastAPI()
+
+def archivo_procesado(archivo_binario: bytes) -> str:
     def identificar_tipo_archivo(archivo_binario):
         if archivo_binario.startswith(b'%PDF'):
             return 'pdf'
         elif archivo_binario.startswith(b'PK'):
-            # DOCX y PPTX son archivos ZIP que comienzan con 'PK'
             if b'word/' in archivo_binario:
                 return 'docx'
             elif b'ppt/' in archivo_binario:
@@ -23,63 +27,40 @@ def archivo_procesado(archivo:str)->str:
 
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-    with open(archivo, 'rb') as file:
-        archivo_binario = file.read()
-        
     tipo_archivo = identificar_tipo_archivo(archivo_binario)
     print(tipo_archivo)
 
-
     regex = re.compile(r'\t|\n|\r|  ')
-    # Abrir archivo dependiendo del tipo de archivo
-    texto:list[str]=[]
-    if(tipo_archivo == 'txt'):
-        fichero = open(archivo, 'r')
-        texto = fichero.readlines()
-    elif(tipo_archivo == 'pdf'):
-        # Abre el archivo PDF en modo lectura binaria
-        with open(archivo, 'rb') as fichero:
-            # Crea un objeto de lectura de PDF
-            lector_pdf = PyPDF2.PdfReader(fichero)
-            # Obtén el número de páginas en el PDF
-            num_paginas = len(lector_pdf.pages)
-            # Lee cada página y extrae el texto
-            for i in range(num_paginas):
-                pagina = lector_pdf.pages[i]
-                text = pagina.extract_text().split('\n')
-                texto=text
-    elif(tipo_archivo == 'docx'):
-        # Abre el archivo DOCX
-        documento = Document(archivo)
+    texto = []
+
+    if tipo_archivo == 'txt':
+        texto = archivo_binario.decode('utf-8').splitlines()
+    elif tipo_archivo == 'pdf':
+        lector_pdf = PyPDF2.PdfReader(io.BytesIO(archivo_binario))
+        num_paginas = len(lector_pdf.pages)
+        for i in range(num_paginas):
+            pagina = lector_pdf.pages[i]
+            texto.extend(pagina.extract_text().split('\n'))
+    elif tipo_archivo == 'docx':
+        documento = Document(io.BytesIO(archivo_binario))
         for parrafo in documento.paragraphs:
             texto.append(parrafo.text)
-    elif(tipo_archivo == 'pptx'):
-        # Abre el archivo de PowerPoint
-        presentacion = Presentation(archivo)
-        # Lee y extrae el texto de cada diapositiva
-        for i, diapositiva in enumerate(presentacion.slides):
+    elif tipo_archivo == 'pptx':
+        presentacion = Presentation(io.BytesIO(archivo_binario))
+        for diapositiva in presentacion.slides:
             for forma in diapositiva.shapes:
                 if hasattr(forma, "text"):
                     texto.append(forma.text)
-    elif(tipo_archivo == 'image'):
-        # Leer la imagen
-        img = cv2.imread('a.jpg')
-
-        # Convertir la imagen a escala de grises
+    elif tipo_archivo == 'image':
+        img = cv2.imdecode(np.frombuffer(archivo_binario, np.uint8), cv2.IMREAD_COLOR)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        # Aplicar umbral binario
         _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
-
-        # Aplicar dilatación y erosión para eliminar el ruido
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
         dilated = cv2.dilate(binary, kernel, iterations=1)
         eroded = cv2.erode(dilated, kernel, iterations=1)
+        texto = pytesseract.image_to_string(eroded, lang='spa')
 
-        # Extraer texto de la imagen usando Tesseract OCR
-        texto = pytesseract.image_to_string(eroded, lang='spa')  # Cambia 'spa' por el idioma que necesites
-        
-    texto_filtrado=[]
+    texto_filtrado = []
     if tipo_archivo != 'image':
         for linea in texto:
             nueva_linea = ''.join(char if not regex.match(char) else ' ' for char in linea)
@@ -89,18 +70,18 @@ def archivo_procesado(archivo:str)->str:
                 if char == ' ' and prev_char == ' ':
                     continue
                 else:
-                    nueva_linea2+=(char)
+                    nueva_linea2 += char
                 prev_char = char
             texto_filtrado.append(nueva_linea2)
-        texto_final=''
+        texto_final = ''
         for linea in texto_filtrado:
-            texto_final+=linea+'' if linea.endswith(' ') else linea+' '
+            texto_final += linea + '' if linea.endswith(' ') else linea + ' '
     else:
-        texto_final=""
+        texto_final = ""
         for char in texto:
             if not regex.match(char):
-                texto_final+=char
-        
+                texto_final += char
+
     print(texto_final)
     return texto_final
 

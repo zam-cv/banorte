@@ -62,5 +62,12 @@ def update_item(item_id: int, item: Item):
 def delete_item(item_id: int):
     return {"message": f"Item {item_id} deleted"}
 
+@app.post("/archivo/")
+async def upload_file(file: UploadFile = File(...)):
+    contents = await file.read()
+    # Process the file contents here
+    processed_content = archivo_procesado(contents)
+    return {"content": processed_content}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
