@@ -27,9 +27,11 @@ class GeneralFormat(BaseModel):
     values: Item
 
 class Question(BaseModel):
+    model: str
     category: str
     information_context: str
     user_context: str
+    prompt: str
 
 
 
@@ -54,7 +56,7 @@ def create_question(question: Question):
     value.client.connect()
     if value.collection_exists("Questions"):
         value = VectorialDB("Questions",question_json)
-        result = {"response":value.query_collection("Questions",question.prompt)}
+        result = {"response":value.query_collection(question.prompt)}
     else:
         result = llm_fast_api.generate_questions()
     return JSONResponse(content=result)
@@ -81,14 +83,9 @@ def create_item(general_format: GeneralFormat):
     
     llm_fast_api = FastApiLLMReceiver(general_format_json)
     if general_format.model == 'banorte_ai':
-        value = VectorialDB("BanorteAI",general_format.values)
+        value = VectorialDB("BanorteAI999999", llm_fast_api.banortea_ai())
         value.client.connect()
-        if value.collection_exists("BanorteAI"):
-            value = VectorialDB("BanorteAI",general_format.values)
-            result = {"response":value.query_collection("BanorteAI",general_format.values.prompt)}
-            
-        else:
-            result = llm_fast_api.banortea_ai()
+        result = llm_fast_api.banortea_ai()
             
     elif general_format.model == 'game_banorte_ai':
         value = VectorialDB("GameBanorteAI",general_format.values)

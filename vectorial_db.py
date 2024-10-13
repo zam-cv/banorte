@@ -109,10 +109,3 @@ class VectorialDB():
 
         data = results.objects[0].properties['text']
         return data
-
-
-if __name__ == "__main__":
-    c = VectorialDB("Docs",["jueves"])
-    
-    print(c.collection_exists("Docs",c.get_weaviate_client()))
-    

@@ -126,7 +126,6 @@ class Objective(enum.Enum):
     
     
     '''
-        
 
 class AiRequests():
     '''This class is used to encapsulate the requests to the AI model. It is used to generate content based on the objective and the user input.'''
