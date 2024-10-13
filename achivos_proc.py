@@ -13,6 +13,7 @@ import uvicorn
 app = FastAPI()
 #Función para procesar un archivo. El archivo recibido puede ser un archivo de texto, pdf, docx, pptx o una imagen. Llega como documento binario.
 def archivo_procesado(archivo_binario: bytes) -> str:
+    '''Procesa un archivo y devuelve el texto contenido en el archivo'''
     #Función para identificar el tipo de archivo que se recibe
     def identificar_tipo_archivo(archivo_binario):
         if archivo_binario.startswith(b'%PDF'):

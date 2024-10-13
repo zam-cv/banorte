@@ -2,11 +2,13 @@ from llm.AiResponse import AiRequests, Objective
 import json
 
 class FastApiLLMReceiver():
+    '''Clase que recibe la información de la API y la procesa para enviarla al modelo de LLM'''
     def __init__(self, data : json):
         self.data = data
         self.set_model()
-        
+    
     def set_model(self):
+        '''Set the AI model configuration  to use'''
         objective = self.data['model']
         if objective == "sample":
             self.model = AiRequests(Objective.DUMMY, "You must generate dummy data for testing. Do it in spanish")
@@ -24,6 +26,7 @@ class FastApiLLMReceiver():
             self.model = None
             
     def summarize(self)->dict:
+        '''Summarize the information'''
         if self.data['model'] == 'summary':
             dict_summary = {
                 "response": self.model.make_prompt_with_from_json(self.data['values'])
@@ -31,6 +34,7 @@ class FastApiLLMReceiver():
             return dict_summary
         
     def generate_questions(self)->dict:
+        '''Generate questions for the game'''
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
             
@@ -63,6 +67,7 @@ class FastApiLLMReceiver():
             return dict_pregunta
         
     def banortea_ai(self)->dict:
+        '''Generate the response for the user'''
         if self.data['model'] == 'banorte_ai':
             dict_banorte_ai = {
                 "response": self.model.make_prompt_with_from_json_use_context(self.data['values'])
@@ -70,6 +75,7 @@ class FastApiLLMReceiver():
             return dict_banorte_ai
         
     def game_banorte_ai(self)->dict:
+        '''Generate the response for the game'''
         if self.data['model'] == 'game_banorte_ai':
             dict_game_banorte_ai = {
                 "response": self.model.make_prompt_with_from_json_use_context(self.data['values'])
@@ -77,6 +83,7 @@ class FastApiLLMReceiver():
             return dict_game_banorte_ai
         
     def dummy(self)->dict:
+        '''Generate dummy data for testing'''
         if self.data['model'] == 'sample':
             dict_dummy = {
                 "response": self.model.make_prompt_with_from_json(self.data['values'])

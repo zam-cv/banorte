@@ -11,22 +11,27 @@ from achivos_proc import archivo_procesado
 from vectorial_db import VectorialDB
 import random
 
+
+
 app = FastAPI()
 
 
 
 # Define a Pydantic model for request body
 class Item(BaseModel):
+    '''Defines the structure for the values '''
     prompt: str
     category: str
     information_context: str
     user_context: str
 
 class GeneralFormat(BaseModel):
+    '''Defines the structure for the request body'''
     model: str
     values: Item
 
 class Question(BaseModel):
+    '''Defines the structure for the request body'''
     category: str
 
 
@@ -35,6 +40,7 @@ class Question(BaseModel):
 
 @app.get("/model/selection/data")
 def get_web_scraping():
+    '''Get the data from the web scraping'''
     llm_fast_api = FastApiLLMReceiver({"model":"summary","values":{"prompt":"web scraping"}})
     value = VectorialDB("Banorte",'')
     if value.collection_exists("Banorte",value.get_weaviate_client()):
@@ -47,7 +53,9 @@ def get_web_scraping():
 
 
 @app.post("/model/selection/questions")
+
 def create_question(question: Question):
+    '''Create a question based on the category'''
     
     temp_dict = dict(jsonable_encoder(question))
     temp_dict["model"] = "game_banorte_ai_question"
@@ -61,6 +69,7 @@ def create_question(question: Question):
 
 @app.get("/model/selection/questions/situation")
 def create_situation():
+    '''Create a question based on the category'''
     temp_dict = {"model":"banorte_ai_question","category":"Situación"}
     
     categorias = ['Salud Financiera','Resiliencia Financiera','Educación Financiera','Situación','Inversiones','Ahorro','Crédito','Seguros','Banca Digital','Banca Móvil','Banca en Línea','Banca Personal','Banca Empresarial','Banca Corporativa','Banca de Inversión','Banca Privada','Banca Patrimonial']
@@ -76,6 +85,7 @@ def create_situation():
 
 @app.post("/model/selection/publish/web_scraping")
 def set_web_scraping(general_format: GeneralFormat):
+    '''Set the data from the web scraping'''
     general_format_json = jsonable_encoder(general_format)
     llm_fast_api = FastApiLLMReceiver(general_format_json)
     if general_format.model == 'summary':
@@ -85,6 +95,7 @@ def set_web_scraping(general_format: GeneralFormat):
 # Create a new item
 @app.post("/model/selection/")
 def create_item(general_format: GeneralFormat):
+    '''Set the model and values for the request'''
     # Convert general_format to JSON-compatible format
     temp_dict = dict(jsonable_encoder(general_format))
     print(temp_dict)
@@ -119,18 +130,11 @@ def create_item(general_format: GeneralFormat):
     
     return JSONResponse(content=result)
 
-# Update an item
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_id": item_id, "item": item}
-
-# Delete an item
-@app.delete("/items/{item_id}")
-def delete_item(item_id: int):
-    return {"message": f"Item {item_id} deleted"}
 
 @app.post("/archivo/")
+
 async def upload_file(file: UploadFile = File(...)):
+    '''Upload a file to the server'''
     contents = await file.read()
     processed_content = archivo_procesado(contents)
     return {"content": processed_content}
