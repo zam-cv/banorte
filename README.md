@@ -19,14 +19,20 @@
 git clone https://github.com/zam-cv/banorte
 ```
 
-2. Create a `.env` file in the `api_gateway` directory with the following content
+2. Install
+
+```bash
+pip install kafka-python-ng
+```
+
+3. Create a `.env` file in the `api_gateway` directory with the following content
 
 ```bash
 PORT=8080
 SECRET_KEY=secret_key
 ```
 
-3. Run the following command to start the development environment
+4. Run the following command to start the development environment
 
 ```bash
 docker build -t banorte .
