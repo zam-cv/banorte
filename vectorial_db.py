@@ -24,17 +24,12 @@ class VectorialDB():
         
         self.documents = data
         self.collection_name = collection_name
-        
-        with self.get_weaviate_client() as client:
+        self.client =  self.get_weaviate_client()
+        self.collection = None
+        with self.client as client:
             try:
-                collection = self.create_collection_if_not_exists(collection_name,client)
-                self.add_documents_to_collection(collection)  # Añadir esta llamada
-                data = self.query_collection(collection, prompt)
-                if data:
-                    response = self.generate_response(data, prompt)
-                    print(response)
-                else:
-                    print("No data found")
+                self.collection = self.create_collection_if_not_exists(collection_name,self.client)
+                self.add_documents_to_collection()  # Añadir esta llamada
             except Exception as e:
                 print(f"An error occurred: {e}")
 
@@ -81,13 +76,13 @@ class VectorialDB():
     def collection_exists(self,collection_name,client):
         return collection_name in client.collections.list_all().keys()
 
-    def add_documents_to_collection(self,collection):
-        existing_documents = collection.query.fetch_objects(limit=len(self.documents)).objects
+    def add_documents_to_collection(self):
+        existing_documents = self.collection.query.fetch_objects(limit=len(self.documents)).objects
         existing_texts = [doc.properties['text'] for doc in existing_documents]
         self.documents = [d for d in self.documents if d not in existing_texts]
         
         # Configurar el cliente de Ollama con la dirección IP
-        with collection.batch.dynamic() as batch:
+        with self.collection.batch.dynamic() as batch:
             for d in self.documents:
                 try:
                     response = self.ollama_client.embeddings(model="gemma2:9b", prompt=d)
@@ -100,12 +95,12 @@ class VectorialDB():
 
 
 
-    def query_collection(self,collection, prompt):
+    def query_collection(self, prompt):
         """
         Genera un embedding para el prompt y recupera el documento más relevante de la colección.
         """
         response = self.ollama_client.embeddings(model="gemma2:9b", prompt=prompt)
-        results = collection.query.near_vector(near_vector=response["embedding"], limit=1)
+        results = self.collection.query.near_vector(near_vector=response["embedding"], limit=1)
         
         # Verificar si la consulta devuelve resultados
         if not results.objects:
@@ -119,5 +114,5 @@ class VectorialDB():
 if __name__ == "__main__":
     c = VectorialDB("Docs",["jueves"])
     
-    print(c.collection_exists("Docs"),c.get_weaviate_client())
+    print(c.collection_exists("Docs",c.get_weaviate_client()))
     

@@ -65,7 +65,7 @@ async function main() {
         try {
             result += await scrape(link);
             count++;
-            if (count >= 5) {
+            if (count >= 2) {
                 break;
             }
         } catch (err) {

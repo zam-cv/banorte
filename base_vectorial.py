@@ -79,12 +79,12 @@ def add_documents_to_collection(collection, documents):
 
 
 
-def query_collection(collection, prompt):
+def query_collection(self, prompt):
     """
     Genera un embedding para el prompt y recupera el documento más relevante de la colección.
     """
     response = ollama_client.embeddings(model="gemma2:9b", prompt=prompt)
-    results = collection.query.near_vector(near_vector=response["embedding"], limit=1)
+    results = self.collection.query.near_vector(near_vector=response["embedding"], limit=1)
     
     # Verificar si la consulta devuelve resultados
     if not results.objects:

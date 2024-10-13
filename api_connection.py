@@ -63,10 +63,9 @@ def set_web_scraping(general_format: GeneralFormat):
     general_format_json = jsonable_encoder(general_format)
     llm_fast_api = FastApiLLMReceiver(general_format_json)
     if general_format.model == 'summary':
-        value = VectorialDB("Banorte",'---')
+        value = VectorialDB("Banorte",[general_format.values.prompt])
         if value.collection_exists("Banorte",value.get_weaviate_client()):
-            value = VectorialDB("Banorte",general_format.values)
-            result = {"response":value.query_collection("Banorte",general_format.values.prompt)}
+            result = {"response":value.query_collection(general_format.values.prompt)}
         else:
             result = llm_fast_api.summarize()
     return JSONResponse(content=result)
