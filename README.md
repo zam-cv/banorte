@@ -61,7 +61,18 @@ Si estas en Mac o Linux corre el siguiente comando.
 ```bash
 install_dependencies.sh
 ```
-6. Corra los archivos de instalacion de dependencias. 
+6. Descargar y autenticarte con google SDK
+
+7. Correr los servidores en el siguiente órden.
+  ```
+  ollama run gemma2:9b
+  ```
+  ```
+  python3 api_connection.py`
+  ```
+  ```
+  go run main.go
+  ```
 
 
 
