@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +7,7 @@ import 'package:app/widgets/custom_input_password.dart';
 import 'package:app/widgets/custom_button.dart';
 import 'package:app/routes/app_routes.dart';
 import 'package:app/widgets/date_birth_fields.dart';
+import 'package:app/services/auth_service.dart'; // Importa el servicio de autenticación
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -15,12 +17,122 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _dayController = TextEditingController();
+  final TextEditingController _monthController = TextEditingController();
+  final TextEditingController _yearController = TextEditingController();
+
+  bool _loading = false;
+
+  // Método para obtener la fecha de nacimiento formateada
+  String getDateOfBirth() {
+    return '${_dayController.text.padLeft(2, '0')}/${_monthController.text.padLeft(2, '0')}/${_yearController.text}';
+  }
+
+  Future<void> _register() async {
+    setState(() {
+      _loading = true;
+    });
+
+    // Verificar si las contraseñas coinciden
+    if (_passwordController.text != _confirmPasswordController.text) {
+      _showErrorDialog('Las contraseñas no coinciden');
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
+
+    // Verificar si los campos no están vacíos
+    if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _dayController.text.isEmpty ||
+        _monthController.text.isEmpty ||
+        _yearController.text.isEmpty) {
+      _showErrorDialog('Por favor, rellena todos los campos');
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
+
+    // Capturar la fecha de nacimiento
+    String birthdate = getDateOfBirth();
+    print('Fecha de Nacimiento: $birthdate');
+
+    Map<String, String> registerData = {
+      "first_name": _firstNameController.text,
+      "last_name": _lastNameController.text,
+      "email": _emailController.text,
+      "birthdate": birthdate, // Usamos la fecha de nacimiento formateada
+      "password": _passwordController.text,
+    };
+
+    try {
+      final response = await AuthService.post(
+        "http://172.31.98.243:3000/api/auth/register", // Cambia la URL si es necesario
+        registerData,
+        false, // No requiere autenticación
+      );
+
+      // Imprime la respuesta completa para depuración
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      final responseData = jsonDecode(response.body);
+
+      // Verificar si el mensaje de éxito está presente y el código de estado es 201
+      if (response.statusCode == 201 &&
+          responseData['message'] == 'Usuario registrado exitosamente') {
+        // Registro exitoso, redirigir al login
+        Navigator.pushReplacementNamed(context, AppRoutes.login);
+      } else if (response.statusCode == 409) {
+        // Usuario ya registrado
+        _showErrorDialog(
+            'El usuario ya está registrado. Por favor, inicia sesión.');
+      } else {
+        // Mostrar error en caso de que el registro falle
+        _showErrorDialog(responseData['message'] ?? 'Error en el registro.');
+      }
+    } catch (e) {
+      print('Error: $e');
+      _showErrorDialog("Ocurrió un error. Por favor, intenta de nuevo.");
+    }
+
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context)
-          .colorScheme
-          .secondary, // Fondo con color secundario del theme
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
@@ -55,36 +167,39 @@ class _SignupState extends State<Signup> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Campos de texto
-                      const CustomInput(
-                        label: "Nombres(s)",
+                      CustomInput(
+                        controller: _firstNameController,
+                        label: "Nombre(s)",
                         hintText: "Carlos Rust",
                       ),
-                      const CustomInput(
+                      CustomInput(
+                        controller: _lastNameController,
                         label: 'Apellidos',
                         hintText: 'Carlos Rust',
                       ),
-                      const CustomInput(
-                        label: 'RFC (opcional)',
-                        hintText: 'RFC12345678',
-                      ),
                       const SizedBox(height: 15),
                       // Campo de Fecha de Nacimiento
-                      const DateOfBirthFields(),
-                      const CustomInput(
-                        label: 'Correo electronico',
+                      DateOfBirthFields(
+                        dayController: _dayController,
+                        monthController: _monthController,
+                        yearController: _yearController,
+                      ),
+                      CustomInput(
+                        controller: _emailController,
+                        label: 'Correo electrónico',
                         hintText: 'banorteai@ejemplo.com',
                       ),
-                      const CustomInputPassword(
+                      CustomInputPassword(
+                        controller: _passwordController,
                         label: 'Contraseña',
                         hintText: '**********',
                       ),
-                      const CustomInputPassword(
+                      CustomInputPassword(
+                        controller: _confirmPasswordController,
                         label: 'Confirmar contraseña',
                         hintText: '**********',
                       ),
                       const SizedBox(height: 15),
-                      // Texto para iniciar sesión
                       RichText(
                         text: TextSpan(
                           children: [
@@ -109,35 +224,34 @@ class _SignupState extends State<Signup> {
                                   ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.pushNamed(context, '/login');
+                                  Navigator.pushNamed(context, AppRoutes.login);
                                 },
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Botón de Registro
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
                         child: CustomButton(
                           text: 'Registrar',
-                          onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.home);
-                          },
-                          // Aplica el estilo en el child del botón
-                          child: Text(
-                            'Registrar',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelLarge
-                                ?.copyWith(
+                          onPressed: _register, // Llamar al método de registro
+                          child: _loading
+                              ? const CircularProgressIndicator(
                                   color: Colors.white,
+                                )
+                              : Text(
+                                  'Registrar',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                      ),
                                 ),
-                          ),
                         ),
                       ),
-                      const SizedBox(
-                          height: 20), // Padding extra debajo del botón
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
