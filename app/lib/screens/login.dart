@@ -18,7 +18,7 @@ class Login extends StatelessWidget {
         const Degraded(),
         Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            padding: const EdgeInsets.symmetric(vertical: 9.0),
             child: Column(
               children: [
                 Column(
