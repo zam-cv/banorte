@@ -30,6 +30,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		})
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			c.Set("token", tokenString)
 			c.Set("email", claims["email"])
 			c.Next()
 		} else {

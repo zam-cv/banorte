@@ -4,11 +4,15 @@ import (
 	"api_gateway/config"
 	"api_gateway/middlewares"
 	"bytes"
+	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 type Message struct {
@@ -117,13 +121,65 @@ func addChatRoutes(rg *gin.RouterGroup) {
 			return
 		}
 
+		// Obtener el token del contexto (asumiendo que AuthMiddleware lo ha colocado allí)
+		tokenString, exists := ctx.Get("token")
+		if !exists {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Token no encontrado"})
+			return
+		}
+
+		// Parsear el token
+		token, err := jwt.Parse(tokenString.(string), func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, jwt.ErrSignatureInvalid
+			}
+			return config.JwtSecret, nil
+		})
+
+		if err != nil {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			return
+		}
+
+		var userContext string
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			// Obtener el email del usuario de las claims del token
+			email, ok := claims["email"].(string)
+			if !ok {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener el email del usuario"})
+				return
+			}
+
+			// Obtener los datos del usuario de Firestore
+			docSnap, err := config.FirestoreClient.Collection("users").Doc(email).Get(context.Background())
+			if err != nil {
+				log.Printf("Error al obtener datos del usuario de Firestore: %v", err)
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener información del usuario"})
+				return
+			}
+
+			userData := docSnap.Data()
+			// Eliminar información sensible
+			delete(userData, "password")
+
+			// Crear el contexto del usuario como una cadena
+			userContext = fmt.Sprintf("%s %s tiene %v años", userData["first_name"], userData["last_name"], userData["birthdate"])
+			if userData["mortgage"] != nil {
+				userContext += " y una hipoteca"
+			}
+		} else {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			return
+		}
+
+		println(userContext)
 		llmReq := map[string]interface{}{
 			"model": "banorte_ai",
 			"values": map[string]string{
 				"prompt":              req.Prompt,
 				"category":            "Salud financiera",
 				"information_context": "La salud financiera es ",
-				"user_context":        "Eduardo chavez tiene 25 años y uan hipoteca",
+				"user_context":        userContext,
 			},
 		}
 
