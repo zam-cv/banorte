@@ -121,7 +121,10 @@ class Objective(enum.Enum):
         
         Regresa una respuesta con la siguiente estructura:
         
+        
         pregunta|opción 1| opción2| opción3| opción4| respuesta correcta
+        SIEMPRE HAZ DE LLAMAR A LA PREGUNTA, OPCIONES Y RESPUESTA CORRECTA
+        
     
     '''
     

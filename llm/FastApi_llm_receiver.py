@@ -21,7 +21,7 @@ class FastApiLLMReceiver():
         elif objective == 'banorte_ai':
             self.model =  AiRequests(Objective.BANORTE_ASSISTANT, "Debes de dar asesoría financiera. Debes de responder preguntas de manera personalizada, siempre adaptandote al concepto. No des información falsa.")
         elif objective == 'banorte_ai_question':
-            self.model = AiRequests(Objective.OPEN_QUESTION_EXAMINATION, "Genera una pregunta para el juego, que se trata de una situación práctica en el que el usario deba de responder. Todas las opciones deben de estar aplicadas a la situación. Debes de darle 4 opciones.  Debes de seguir el formato pregunta,opción1,opción2,opción3,opción4,respuesta correcta. SIEMPTE GENERA 6 VALORES 1. La pregunta. 1-4 Opciones, 3 la respuesta correcta. No añadas Pregunta,opción1,opción2,opción3,opción4,respuesta correcta al inicio de la pregunta.  Do it in spanish")
+            self.model = AiRequests(Objective.OPEN_QUESTION_EXAMINATION, "Genera una pregunta para el juego, que se trata de una situación práctica en el que el usario deba de responder. Todas las opciones deben de estar aplicadas a la situación. Debes de darle 4 opciones.  Debes de seguir el formato pregunta | opción1 | opción2 | opción3 | opción4 |respuesta correcta. SIEMPTE GENERA 6 VALORES 1. La pregunta. 2. opción1 | opción2 | opción3 | opción4, 3 la respuesta correcta. No añadas Pregunta,opción1,opción2,opción3,opción4,respuesta correcta al inicio de la pregunta.  Do it in spanish")
         else:
             self.model = None
             
@@ -52,6 +52,7 @@ class FastApiLLMReceiver():
 
         elif self.data['model'] == 'banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split("|")
+            print(pregunta)
             while(len(pregunta)<5):
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
