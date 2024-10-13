@@ -42,6 +42,7 @@ class DateOfBirthFields extends StatelessWidget {
               child: CustomNumField(
                 controller: dayController, // Añadimos el controlador
                 hintText: 'dd',
+
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(2), // Limita a 2 dígitos

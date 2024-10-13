@@ -77,7 +77,7 @@ class _SignupState extends State<Signup> {
 
     try {
       final response = await AuthService.post(
-        "http://172.31.98.243:3000/api/auth/register", // Cambia la URL si es necesario
+        "https://9c2d-201-98-213-10.ngrok-free.app/api/auth/register", // Cambia la URL si es necesario
         registerData,
         false, // No requiere autenticación
       );
@@ -156,7 +156,7 @@ class _SignupState extends State<Signup> {
                   Text(
                     '¡Únete a Banorte AI!',
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                   ),
                 ],
@@ -220,7 +220,8 @@ class _SignupState extends State<Signup> {
                                   .textTheme
                                   .bodyMedium
                                   ?.copyWith(
-                                    color: Colors.white,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
                                   ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
