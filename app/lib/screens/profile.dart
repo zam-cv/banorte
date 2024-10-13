@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/custom_nav.dart'; // Asegúrate de importar la navbar existente
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:app/config.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,6 +14,39 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
+  String firstName = '';
+  String lastName = '';
+  String email = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserInfo(); // Llama al método para obtener la información del usuario cuando se inicia la pantalla
+  }
+
+  // Método para obtener la información del usuario desde el backend
+  Future<void> getUserInfo() async {
+    final response = await http.get(
+      Uri.parse(
+          '${Config.baseUrl}/api/auth/user-info'), // Cambia la URL si es necesario
+      headers: {
+        'Authorization': 'Bearer ${Config.token}', // Token para autenticación
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        firstName = data['user']['first_name']; // Obtén el nombre
+        lastName = data['user']['last_name']; // Obtén el apellido
+        email = data['user']['email']; // Obtén el correo
+      });
+    } else {
+      // Manejo de errores si la solicitud falla
+      print(
+          'Error al obtener la información del usuario: ${response.statusCode}');
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -32,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 .colorScheme
                 .secondary, // Fondo azul para el logo
             padding: const EdgeInsets.only(
-              top: 30, // Aumenta la distancia del logo desde la parte superior
+              top: 40, // Aumenta la distancia del logo desde la parte superior
               bottom: 20, // Espacio debajo del logo
             ),
             child: SvgPicture.asset(
@@ -87,9 +123,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Nombre y correo electrónico
+                  // Nombre y correo electrónico dinámico
                   Text(
-                    'Carlos Rust',
+                    '$firstName $lastName',
                     style: TextStyle(
                       color: Theme.of(context)
                           .colorScheme
@@ -100,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'carlos_rust@gmail.com',
+                    email,
                     style: TextStyle(
                       color: Theme.of(context)
                           .colorScheme

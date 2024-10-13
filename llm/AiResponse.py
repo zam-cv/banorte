@@ -240,15 +240,12 @@ class AiRequests():
     def generate_questions_with_json(self, context) -> str:
         '''This method is used to generate questions based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
-        file = open('Output.txt', 'r', encoding='utf-8')
+
         data = context
-        information = file.read()
-        detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
-        
-        for key, value in data.items():
-            detailed_prompt += f"{key}: {value}\n"
-            
-        detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
+        print(data)
+        detailed_prompt = f"User input: {data}.\nContext:\n"
+  
+        #detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
             
         detailed_prompt += "Answer:"
         
@@ -260,7 +257,7 @@ class AiRequests():
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
-            file.close()
+         
             
             if response.candidates and response.candidates[0].finish_reason == "SAFETY":
                 raise ValueError("Response blocked by safety filters.")
