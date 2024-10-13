@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           secondary: Colors.white,
           onSecondary: Colors.white,
           tertiary: const Color(0xff5b6670),
-          primaryContainer: const Color(0x84131B44),
+          primaryContainer: const Color(0x52131B44),
           onPrimaryContainer: const Color.fromARGB(255, 224, 224, 224),
           secondaryContainer: const Color.fromARGB(255, 17, 31, 85),
           onSecondaryContainer: const Color.fromARGB(255, 105, 105, 105),
