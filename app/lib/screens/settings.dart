@@ -3,12 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/custom_nav.dart'; // Asegúrate de importar la navbar existente
 import 'package:app/widgets/button.dart';
 import 'package:app/routes/app_routes.dart';
+import 'package:app/widgets/custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -20,6 +22,27 @@ class _ProfilePageState extends State<SettingsPage> {
       _selectedIndex = index;
       // Navegación a otras páginas si es necesario
     });
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode
+              .externalApplication, // Abre en una aplicación externa (navegador)
+        );
+      } else {
+        throw 'No se pudo abrir $url';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al abrir el enlace: $e'),
+        ),
+      );
+    }
   }
 
   @override
@@ -49,7 +72,7 @@ class _ProfilePageState extends State<SettingsPage> {
                 Text(
                   'Ajustes',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Colors.white, // Color blanco
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                 ),
               ],
@@ -61,85 +84,181 @@ class _ProfilePageState extends State<SettingsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Botón "Conócenos" con el estilo del Theme
+                  const SizedBox(height: 20), // Espacio arriba del texto
+                  // Texto "Acerca de nosotros"
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Acerca de nosotros',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Botón "Conócenos" con funcionalidad de URL
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Button(
                       text: 'Conócenos',
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.home);
+                        _launchUrl('https://www.banorte.com/');
                       },
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  // Texto "Cuenta"
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                        'Conócenos',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Colors.white, // Color del texto del botón
-                            ),
+                        'Cuenta',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 15),
-                  // Texto "¿Ya tienes cuenta?" usando los estilos del Theme
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: '¿Ya tienes cuenta? ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Botón de Registro con el enlace de Banorte
+                  // Botón "Ajustes de privacidad" con funcionalidad de URL
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Button(
-                      text: 'Registrar',
-                      onPressed: () async {
-                        const url = 'https://www.google.com/';
-                        final Uri uri = Uri.parse(url);
-
-                        // Lógica para abrir el enlace
-                        try {
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(
-                              uri,
-                              mode: LaunchMode
-                                  .externalApplication, // Para móviles
-                            );
-                          } else {
-                            throw 'No se pudo abrir $url';
-                          }
-                        } catch (e) {
-                          // Muestra un diálogo o snackbar si falla la apertura del enlace
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Error al abrir el enlace: $e')),
-                          );
-                        }
+                      text: 'Ajustes de privacidad',
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.home);
                       },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Botón "Perfil" con funcionalidad de URL
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Button(
+                      text: 'Perfil',
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.profile);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20), // Espaciado entre secciones
+                  // Texto "Soporte"
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                        'Registrar',
+                        'Soporte',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Botón "Sugerencias" con funcionalidad de URL
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Button(
+                      text: 'Atencion y contacto',
+                      onPressed: () {
+                        _launchUrl(
+                            'https://www.banorte.com/wps/portal/ixe/Home/conoce-contacto/');
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Botón "Centro de ayuda" con funcionalidad de URL
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Button(
+                      text: 'Centro de ayuda',
+                      onPressed: () {
+                        _launchUrl(
+                            'https://www.banorte.com/wps/portal/banorte/Home/ayuda/');
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20), // Espaciado adicional
+                  // Botón "Cerrar Sesión"
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 25, vertical: 20),
+                    child: CustomButton(
+                      text: 'Cerrar Sesión',
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.login);
+                      },
+                      // Aplica el estilo en el child del botón
+                      child: Text(
+                        'Cerrar Sesión',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Colors.white, // Color del texto del botón
+                              color: Colors.white,
                             ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20), // Padding extra debajo del botón
+                  const SizedBox(height: 10),
+                  // Texto "Términos" con funcionalidad de URL
+                  GestureDetector(
+                    onTap: () {
+                      _launchUrl(
+                          'https://www.banorte.com/wps/portal/banorte/Home/servicios-en-linea/banca-digital/banco-linea/terminos-condiciones/');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Términos',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Texto "Política de Privacidad" con funcionalidad de URL
+                  GestureDetector(
+                    onTap: () {
+                      _launchUrl(
+                          'https://www.banorte.com/wps/portal/gfb/Home/banorte-te-informa/aviso-de-privacidad');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Política de Privacidad',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20), // Padding extra debajo
                 ],
               ),
             ),
           ),
         ],
       ),
-      // Navbar existente
       bottomNavigationBar: CustomNavBar(
         onTabSelected: _onItemTapped, // Función para manejar las selecciones
         selectedIndex: _selectedIndex, // Perfil está seleccionada
