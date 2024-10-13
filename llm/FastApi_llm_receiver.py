@@ -42,8 +42,7 @@ class FastApiLLMReceiver():
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
                     continue
-<<<<<<< HEAD
-=======
+
                 else: 
                     break
             dict_pregunta = {
@@ -57,7 +56,6 @@ class FastApiLLMReceiver():
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
                     continue
->>>>>>> 522782b61eee058af4e1032cc54095479594e09a
                 else:
                     break
             dict_pregunta = {
