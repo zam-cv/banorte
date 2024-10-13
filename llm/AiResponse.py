@@ -1,7 +1,7 @@
 import vertexai
 import enum
 import json
-from CONSTS import *
+from llm.CONSTS import *
 
 from vertexai.generative_models import (
     GenerationConfig,
@@ -186,9 +186,9 @@ class AiRequests():
             )
         return response.text 
     
-    def make_prompt_with_from_json(self, context:json)->str:
+    def make_prompt_with_from_json(self, context)->str:
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
-        data = json.loads(context)
+        data = context
         
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
@@ -209,10 +209,11 @@ class AiRequests():
     def get_context_data(self)->str:
         '''This method is used to get the context data from the Output.txt file. It returns the context data.'''
         try:
-            with open('Output.txt', 'r', encoding='utf-8') as file:
-                
-                context = file.read()
-            return context
+            #with open('Output.txt', 'r', encoding='utf-8') as file:
+            #    print(file.read())
+            #    context = str(file.read())
+            #    return context
+            return "Hola mundo"
         except FileNotFoundError:
             return "Context data not found."
         except UnicodeDecodeError:
@@ -226,23 +227,32 @@ class AiRequests():
     def segment_context_data(self)->list:
         '''This method is used to segment the context data. It returns a list with the segmented context data.'''
         self.contents = []
-        information = self.get_context_data()
-        self.contents.append(information)
+        file = open('Output.txt', 'r', encoding='utf-8')
+        information = file.read()
+        print("---------------------------")
+        print(information)
+
+        detailed_prompt = f"User input: summarize this text.\nContext: {information}\n"
+        detailed_prompt += "Answer:"
+        
+        self.contents.append(detailed_prompt)
+        
         response = self.model.generate_content(
             self.contents,
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
             )
-        if response:
-            self.segment_context_data(response.text)
         
+        if response:
+            self.set_context_data(response.text)
+        file.close()
         return response.text
         
 
-    def make_prompt_with_from_json_use_context(self, context:json)->str:
+    def make_prompt_with_from_json_use_context(self, context)->str:
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
-        data = json.loads(context)
+        data = context
         information = self.get_context_data()
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
@@ -262,11 +272,16 @@ class AiRequests():
             )
         return response.text
     
-    
-    def generate_questions_with_json(self, context: json) -> str:
+        # {
+        #     "question": "user input",
+        #     "options": ["option1", "option2", "option3", "option4"],
+        #     "correct_answer": "correct option"
+        # }
+        
+    def generate_questions_with_json(self, context) -> str:
         '''This method is used to generate questions based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
-        data = json.loads(context)
+        data = context
         information = self.get_context_data()
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
@@ -289,7 +304,7 @@ class AiRequests():
             if response.candidates and response.candidates[0].finish_reason == "SAFETY":
                 raise ValueError("Response blocked by safety filters.")
             
-            return response.text
+            return response.text.replace('\n', '').strip()
         
         except ValueError as e:
             print(f"Error generating content: {e}")
@@ -329,9 +344,5 @@ if __name__ == "__main__":
         "user_context": "El usuario eduardo Chavez tiene 25 años y esta interesado en aprender sobre finanzas personales"
     }
     )
-    
-    print(ai.make_prompt_with_from_json_use_context(json_context))
-    print("--------------")
-    print(question_ai.generate_questions_with_json(json_context))
-    print("--------------")
+
     print(ai_summarizer.segment_context_data())

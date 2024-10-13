@@ -1,9 +1,9 @@
-from AiResponse import AiRequests, Objective
+from llm.AiResponse import AiRequests, Objective
 import json
 
 
-class KafkaLLMReceiver():
-    def __init__(self, data):
+class FastApiLLMReceiver():
+    def __init__(self, data : json):
         self.data = data
         self.set_model()
         
