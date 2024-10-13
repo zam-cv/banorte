@@ -72,31 +72,34 @@ def set_web_scraping(general_format: GeneralFormat):
 @app.post("/model/selection/")
 def create_item(general_format: GeneralFormat):
     # Convert general_format to JSON-compatible format
-    general_format_json = jsonable_encoder(general_format)
-    
-    llm_fast_api = FastApiLLMReceiver(general_format_json)
-    if general_format.model == 'banorte_ai':
-        value = VectorialDB("BanorteAI999999", llm_fast_api.banortea_ai())
+    temp_dict = dict(jsonable_encoder(general_format))
+    print(temp_dict)
+    print("---------------")
+    llm_fast_api = FastApiLLMReceiver(temp_dict)
+    if temp_dict['model'] == 'banorte_ai':
+        values = temp_dict["values"]
+        value = VectorialDB("BanorteDataBase",f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]}')
         value.client.connect()
+        temp_dict["values"]["information_context"] += value.query_collection(f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]} con la información de la categoría {values["information_context"]} y de usuario {values["user_context"]} ')
+        value.client.connect()
+        llm_fast_api = FastApiLLMReceiver(temp_dict)
         result = llm_fast_api.banortea_ai()
             
-    elif general_format.model == 'game_banorte_ai':
-        value = VectorialDB("GameBanorteAI",general_format.values)
+    elif temp_dict['model'] == 'game_banorte_ai':
+        values = temp_dict["values"]
+        value = VectorialDB("BanorteDataBase",f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]}')
         value.client.connect()
-        if value.collection_exists("GameBanorteAI"):
-            value = VectorialDB("GameBanorteAI",general_format.values)
-            result = {"response":value.query_collection("GameBanorteAI",general_format.values.prompt)}
-        else:
-            result = llm_fast_api.game_banorte_ai()
+        temp_dict["values"]["information_context"] += value.query_collection(f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]} con la información de la categoría {values["information_context"]} y de usuario {values["user_context"]} ')
+        value.client.connect()
+        result = llm_fast_api.game_banorte_ai()
             
-    elif general_format.model == 'sample':
-        value = VectorialDB("Sample",general_format.values)
+    elif temp_dict['model'] == 'sample':
+        values = temp_dict["values"]
+        value = VectorialDB("BanorteDataBase",f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]}')
         value.client.connect()
-        if value.collection_exists("Sample"):
-            value = VectorialDB("Sample",general_format.values)
-            result = {"response":value.query_collection("Sample",general_format.values.prompt)}
-        else:
-            result = llm_fast_api.dummy()
+        temp_dict["values"]["information_context"] += value.query_collection(f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]} con la información de la categoría {values["information_context"]} y de usuario {values["user_context"]} ')
+        value.client.connect()
+        result = llm_fast_api.dummy()
     else:
         raise HTTPException(status_code=400, detail="Invalid model")
     
