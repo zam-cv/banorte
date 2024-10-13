@@ -24,11 +24,14 @@ class FastApiLLMReceiver():
         else:
             self.model = None
             
-    def summarize(self):
+    def summarize(self)->dict:
         if self.data['model'] == 'summary':
-            return self.model.segment_context_data(self.data['values']['prompt'])
+            dict_summary = {
+                "response": self.model.make_prompt_with_from_json(self.data['values'])
+            }
+            return dict_summary
         
-    def generate_questions(self)->json:
+    def generate_questions(self)->dict:
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['values']).strip().split(",")
             dict_pregunta = {
@@ -36,20 +39,29 @@ class FastApiLLMReceiver():
                 "options": pregunta[1:5],
                 "correct_answer": pregunta[5]
             }
-            print(json.dumps(dict_pregunta))
-            return json.dumps(dict_pregunta,ensure_ascii=False)
+           
+            return dict_pregunta
         
-    def banortea_ai(self):
+    def banortea_ai(self)->dict:
         if self.data['model'] == 'banorte_ai':
-            return self.model.make_prompt_with_from_json_use_context(self.data['values'])
+            dict_banorte_ai = {
+                "response": self.model.make_prompt_with_from_json_use_context(self.data['values'])
+            }
+            return dict_banorte_ai
         
-    def game_banorte_ai(self):
+    def game_banorte_ai(self)->dict:
         if self.data['model'] == 'game_banorte_ai':
-            return self.model.make_prompt_with_from_json_use_context(self.data['values'])
+            dict_game_banorte_ai = {
+                "response": self.model.make_prompt_with_from_json_use_context(self.data['values'])
+            }
+            return dict_game_banorte_ai
         
-    def dummy(self):
+    def dummy(self)->dict:
         if self.data['model'] == 'sample':
-            return self.model.make_prompt_with_from_json(self.data['values'])
+            dict_dummy = {
+                "response": self.model.make_prompt_with_from_json(self.data['values'])
+            }
+            return dict_dummy
 
 
 
