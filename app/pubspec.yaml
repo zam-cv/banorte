@@ -33,6 +33,7 @@ dependencies:
   window_manager: ^0.4.2
   flutter_svg: ^2.0.10+1
   url_launcher: ^6.3.0
+  http: ^0.13.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -64,8 +65,11 @@ flutter:
     - assets/logo.svg
     - assets/home_icon.png
     - assets/news_icon.png
+    - assets/news_icon.svg
     - assets/learn_icon.png
+    - assets/learn_icon.svg
     - assets/practice_icon.png
+    - assets/practice_icon.svg
     - assets/settings_icon.png
     - assets/cross.png
     - assets/noticia_muestra.png

@@ -24,7 +24,7 @@ class BaseLayout extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 5,
+            top: 10,
           ),
           child: child,
         ),

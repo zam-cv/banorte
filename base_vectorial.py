@@ -9,24 +9,22 @@ warnings.simplefilter("ignore", ResourceWarning)
 
 # Conectar al cliente de Weaviate usando 'with' para garantizar que se cierre automáticamente
 def get_weaviate_client():
-    return weaviate.connect_to_local()
+    return weaviate.connect_to_custom(
+        http_host="172.31.98.243",
+        http_port=8080,
+        http_secure=False,
+        grpc_host="172.31.98.243",
+        grpc_port=50051,
+        grpc_secure=False,
+        headers={"User-Agent":"weaviate-python-client"}
+        
+    )
 
 # Lista de documentos para añadir a la colección
-documents = []
+documents = ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
 
-current_directory = os.path.dirname(__file__)
-documents_path = os.path.join(current_directory, 'documents.json')
 
-with open(documents_path) as f:
-    documents = json.load(f)
 
-files_directory = os.path.join(current_directory, 'files')
-
-for file in os.listdir(files_directory):
-    if file.endswith('.txt'):
-        file_path = os.path.join(files_directory, file)
-        with open(file_path) as f:
-            documents.append(f.read())
 
 collection_name = "Docs"
 
@@ -47,30 +45,37 @@ def generate_response(data, prompt):
     """
 
     prompt_template = f"Using this data: {data}, respond concisely to this prompt: {prompt}."
-    output = ollama.generate(model="gemma2:27b", prompt=prompt_template, system="You are ...")
+    output = ollama.generate(model="gemma2:9b", prompt=prompt_template, system="You are ...")
     return output['response']
 
+
 def add_documents_to_collection(collection, documents):
-    """
-    Añade documentos a la colección en lotes dinámicos con embeddings generados.
-    """
     existing_documents = collection.query.fetch_objects(limit=len(documents)).objects
     existing_texts = [doc.properties['text'] for doc in existing_documents]
     documents = [d for d in documents if d not in existing_texts]
     
+    # Configurar el cliente de Ollama con la dirección IP
+    ollama_client = ollama.Client()
+    ollama_client.base_url = "http://172.31.98.243:11434"
+
     with collection.batch.dynamic() as batch:
         for d in documents:
-            response = ollama.embeddings(model="all-minilm", prompt=d)
-            if 'embedding' in response:
-                batch.add_object(properties={"text": d}, vector=response["embedding"])
-            else:
-                print(f"Error generating embedding for document: {d}")
+            try:
+                response = ollama_client.embeddings(model="gemma2:9b", prompt=d)
+                if 'embedding' in response:
+                    batch.add_object(properties={"text": d}, vector=response["embedding"])
+                else:
+                    print(f"Error generating embedding for document: {d}")
+            except Exception as e:
+                print(f"An error occurred while generating embedding for document: {d}. Error: {e}")
+
+
 
 def query_collection(collection, prompt):
     """
     Genera un embedding para el prompt y recupera el documento más relevante de la colección.
     """
-    response = ollama.embeddings(model="all-minilm", prompt=prompt)
+    response = ollama.embeddings(model="gemma2:9b", prompt=prompt)
     results = collection.query.near_vector(near_vector=response["embedding"], limit=1)
     
     # Verificar si la consulta devuelve resultados
@@ -96,5 +101,5 @@ def main():
         except Exception as e:
             print(f"An error occurred: {e}")
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()

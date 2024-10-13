@@ -1,20 +1,110 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:app/routes/app_routes.dart';
 import 'package:app/widgets/custom_button.dart';
 import 'package:app/widgets/custom_input.dart';
 import 'package:app/widgets/custom_input_password.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:app/config.dart';
+import 'package:app/services/auth_service.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({super.key});
+
+  @override
+  LoginState createState() => LoginState();
+}
+
+class LoginState extends State<Login> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _loading = false; // Indicador de carga
+
+  Future<void> _login() async {
+    final currentContext = context; // Guardar el contexto antes del await
+
+    setState(() {
+      _loading = true;
+    });
+
+    Map<String, String> credentials = {
+      "email": _emailController.text,
+      "password": _passwordController.text,
+    };
+
+    try {
+      final response = await AuthService.post(
+        "${Config.baseUrl}/api/auth/login",
+        credentials,
+        false,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        Config.token = data['token'];
+
+        // Verificar la sesión con el token recibido
+        final verifyResponse = await AuthService.verifySession();
+
+        if (verifyResponse.statusCode == 200) {
+          // Sesión verificada correctamente
+          print("Sesión verificada correctamente.");
+          // Redirigir a la pantalla principal
+          Navigator.pushNamed(currentContext, AppRoutes.home);
+        } else {
+          // Error al verificar la sesión
+          print("Error al verificar la sesión: ${verifyResponse.body}");
+          _showErrorDialog("Error al verificar la sesión.");
+        }
+      } else {
+        _showErrorDialog("Login failed. Please check your credentials.");
+      }
+    } catch (e) {
+      _showErrorDialog("An error occurred. Please try again.");
+    }
+
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            'Error',
+            style: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .tertiary, // Color terciario para el título
+            ),
+          ),
+          content: Text(
+            message,
+            style: TextStyle(
+              color: Theme.of(context)
+                  .colorScheme
+                  .tertiary, // Color terciario para el contenido
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context)
-          .colorScheme
-          .secondary, // Fondo con color secundario del theme
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 9.0),
@@ -31,7 +121,6 @@ class Login extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 13),
-                  // Texto grande con el estilo del Theme
                   Text(
                     "Academia Financiera",
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
@@ -39,7 +128,6 @@ class Login extends StatelessWidget {
                         ),
                   ),
                   const SizedBox(height: 5),
-                  // Texto pequeño con el estilo del Theme
                   Text(
                     'Educación Financiera en la palma de tu mano',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -55,7 +143,6 @@ class Login extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Texto grande con el estilo del Theme
                       Text(
                         '¡Bienvenido!',
                         style:
@@ -63,14 +150,16 @@ class Login extends StatelessWidget {
                                   color: Theme.of(context).colorScheme.tertiary,
                                 ),
                       ),
-
                       const SizedBox(height: 10),
-                      const CustomInput(
+                      CustomInput(
+                        controller: _emailController, // Controlador del email
                         label: "Correo electronico",
                         hintText: "a51726553@gmail.com",
                       ),
                       const SizedBox(height: 15),
-                      const CustomInputPassword(
+                      CustomInputPassword(
+                        controller:
+                            _passwordController, // Controlador del password
                         label: "Contraseña",
                         hintText: "**********",
                       ),
@@ -82,7 +171,6 @@ class Login extends StatelessWidget {
                             Navigator.pushNamed(
                                 context, AppRoutes.forgotPassword);
                           },
-                          // Texto pequeño con el estilo del Theme
                           child: Text(
                             'Olvidé mi contraseña',
                             style: Theme.of(context)
@@ -135,16 +223,20 @@ class Login extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: CustomButton(
                       text: 'Iniciar sesión',
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.home);
-                      },
-                      // Aplica el estilo en el child del botón
-                      child: Text(
-                        'Iniciar sesión',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      onPressed: _login, // Llamar a la función de login
+                      child: _loading
+                          ? const CircularProgressIndicator(
                               color: Colors.white,
+                            )
+                          : Text(
+                              'Iniciar sesión',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                  ),
                             ),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
