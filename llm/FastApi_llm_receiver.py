@@ -51,7 +51,7 @@ class FastApiLLMReceiver():
             }
 
         elif self.data['model'] == 'banorte_ai_question':
-            pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+            pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split("|")
             while(len(pregunta)<5):
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
