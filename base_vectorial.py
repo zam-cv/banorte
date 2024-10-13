@@ -21,8 +21,17 @@ def get_weaviate_client():
     )
 
 # Lista de documentos para añadir a la colección
-documents = ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+file = open("Output.txt", "r")
+documents = [file.read()]
+file.close()
+ollama_client = ollama.Client(
+    follow_redirects=True,
 
+    headers={"User-Agent":"ollama-python","Content-Type":"application/json","Accept":"application/json"},
+    timeout = None
+    
+)
+ollama_client.base_url = "http://172.31.98.243:11434"
 
 
 
@@ -45,7 +54,8 @@ def generate_response(data, prompt):
     """
 
     prompt_template = f"Using this data: {data}, respond concisely to this prompt: {prompt}."
-    output = ollama.generate(model="gemma2:9b", prompt=prompt_template, system="You are ...")
+
+    output = ollama_client.generate(model="gemma2:9b", prompt=prompt_template, system="You are ...")
     return output['response']
 
 
@@ -55,9 +65,6 @@ def add_documents_to_collection(collection, documents):
     documents = [d for d in documents if d not in existing_texts]
     
     # Configurar el cliente de Ollama con la dirección IP
-    ollama_client = ollama.Client()
-    ollama_client.base_url = "http://172.31.98.243:11434"
-
     with collection.batch.dynamic() as batch:
         for d in documents:
             try:
@@ -75,7 +82,7 @@ def query_collection(collection, prompt):
     """
     Genera un embedding para el prompt y recupera el documento más relevante de la colección.
     """
-    response = ollama.embeddings(model="gemma2:9b", prompt=prompt)
+    response = ollama_client.embeddings(model="gemma2:9b", prompt=prompt)
     results = collection.query.near_vector(near_vector=response["embedding"], limit=1)
     
     # Verificar si la consulta devuelve resultados
