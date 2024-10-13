@@ -9,6 +9,7 @@ import 'package:app/screens/signup.dart';
 import 'package:app/screens/forgot_password.dart';
 import 'package:app/screens/home.dart';
 import 'package:app/screens/practice.dart';
+import 'package:app/screens/news.dart';
 
 class BaseLayout extends StatelessWidget {
   final Widget child;
@@ -46,6 +47,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String learn = '/learn';
   static const String practice = '/practice';
+  static const String news = '/news';
 
   static final Map<String, Widget> routes = {
     login: const Login(),
@@ -54,6 +56,7 @@ class AppRoutes {
     home: const Home(),
     learn: const LearnPage(),
     practice: const PracticePage(),
+    news: const NewsPage(),
   };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {

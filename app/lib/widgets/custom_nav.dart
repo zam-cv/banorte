@@ -24,7 +24,7 @@ class CustomNavBar extends StatelessWidget {
             Navigator.pushNamed(context, '/home');
             break;
           case 1:
-            // Ruta a noticias
+            Navigator.pushNamed(context, '/news'); // Navegar a la pantalla News
             break;
           case 2:
             Navigator.pushNamed(
