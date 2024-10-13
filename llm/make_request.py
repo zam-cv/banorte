@@ -12,7 +12,12 @@ from vertexai.generative_models import (
 
 class Objective(enum.Enum):
     
-    BANORTE_ASSISTANT = '''Eres un asistente virtual de Banorte especializado en educación financiera.",
+    BANORTE_ASSISTANT = '''Eres BanorteAI, siempre te presentas así. Eres un asistente virtual de Banorte especializado en educación financiera.",
+    
+        Recuerda que Banorte es uno de los bancos más grandes y reconocidos de México1
+        . Ofrece una amplia gama de servicios financieros, incluyendo cuentas de ahorro, préstamos, seguros, inversiones y asesoría financiera1
+        . Banorte también tiene una fuerte presencia en línea, permitiendo a sus clientes gestionar sus cuentas y realizar transacciones de manera segura y conveniente
+
     
         "Tu misión es ayudar a los usuarios a aprender sobre finanzas personales a través de juegos interactivos.",
         
@@ -38,6 +43,22 @@ class Objective(enum.Enum):
         user_context: Es la informacion del usuario que haz de utilizar para dar una respuesta personalizada
 
         '''
+    DUMMY = '''Eres un generador de JSON para pruebas Todas tus respuestas deben de ser en español. Debes generar JSONS con el formato
+        {
+            "prompt": "user input",
+            "category": "category",
+            "information_context" :"data to reference"
+            "user_context" : "Information about the user"
+        }
+         "prompt": puede ser cualquier pregunta de educación financiera, dudas sobre tarjetas de crédito, seguros, etc.
+         "category": es la categoria de la pregunta. Puede ser: salud financiera, seguridad financiera, tarjetas de crédito, seguros
+            "information_context": es la informacion que debes de referenciar para responder la pregunta. Información sobre el tema de la pregunta
+            "user_context": es la informacion del usuario que haz de utilizar para dar una respuesta personalizada. Información sobre el usuario que hace la pregunta. Sobre su trasfondo, nivel de conocimiento y experiencias previas
+        
+        asimismo recibirás un parámetro de BANORTE_DATASOURCE que contiene información sobre Banorte que puedes utilizar para responder las preguntas
+        algunos de esos son artículos de banorte, usalos para responder las preguntas o referenciarlos
+    
+    '''
         
 
 class AiRequests():
@@ -97,7 +118,7 @@ class AiRequests():
     def make_prompt_with_from_json(self, context:json)->str:
         data = json.loads(context)
         
-        detailed_prompt = f"User input: {data["prompt"]}.\nContext:\n"
+        detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
         for key, value in data.items():
             detailed_prompt += f"{key}: {value}\n"
@@ -113,7 +134,38 @@ class AiRequests():
             )
         return response.text 
 
+    def get_context_data(self)->str:
+        try:
+            with open('Output.txt', 'r', encoding='utf-8') as file:
+                
+                context = file.read()
+            return context
+        except FileNotFoundError:
+            return "Context data not found."
+        except UnicodeDecodeError:
+            return "Error decoding the context data."
 
+    def make_prompt_with_from_json_use_context(self, context:json)->str:
+        data = json.loads(context)
+        context = self.get_context_data()
+        detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
+        
+        for key, value in data.items():
+            detailed_prompt += f"{key}: {value}\n"
+            
+        detailed_prompt += f"BANORTE_DATASOURCE: {context}\n"
+            
+        detailed_prompt += "Answer:"
+        
+        self.contents.append(detailed_prompt)
+        
+        response = self.model.generate_content(
+            self.contents,
+            generation_config=self.generation_config,
+            safety_settings=self.safety_settings,
+            )
+        return response.text 
+    
 if __name__ == "__main__":
     ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spansih")
     # Example JSON context
@@ -144,4 +196,4 @@ Tarjetas de Crédito: Diferentes opciones de tarjetas de crédito con beneficios
     }
     )
     
-    print(ai.make_prompt_with_from_json(json_context))
+    print(ai.make_prompt_with_from_json_use_context(json_context))

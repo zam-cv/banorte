@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:app/routes/app_routes.dart';
-import 'package:window_manager/window_manager.dart';
+//import 'package:window_manager/window_manager.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await windowManager.ensureInitialized();
 
-  windowManager.waitUntilReadyToShow().then((_) async {
-    await windowManager.setTitleBarStyle(TitleBarStyle.hidden,
-        windowButtonVisibility: true);
-    await windowManager.show();
-  });
+//   windowManager.waitUntilReadyToShow().then((_) async {
+//     await windowManager.setTitleBarStyle(TitleBarStyle.hidden,
+//         windowButtonVisibility: true);
+//     await windowManager.show();
+//   });
 
+//   runApp(const MyApp());
+// }
+
+void main() {
   runApp(const MyApp());
 }
 

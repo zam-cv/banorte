@@ -5,12 +5,9 @@ class Degraded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
+    return Positioned.fill(
+      // Ocupa toda la pantalla
       child: Container(
-        height: MediaQuery.of(context).size.height / 3,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
