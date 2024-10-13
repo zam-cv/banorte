@@ -35,6 +35,9 @@ SECRET_KEY=secret_key
 4. Run the following command to start the development environment
 
 ```bash
-docker build -t banorte .
-docker run -d -p 22:22 -p 80:80 -p 9092:9092 -e ROOT_PASSWORD=awdrqwer12 --name banorte-server banorte 
+docker run -d --name=redpanda \
+  -p 9092:9092 \
+  -p 9644:9644 \
+  docker.redpanda.com/vectorized/redpanda:latest \
+  redpanda start
 ```
