@@ -22,17 +22,18 @@ def get_weaviate_client():
 
 # Lista de documentos para añadir a la colección
 file = open("Output.txt", "r")
-documents = [file.read()]
+documents = ["My name is Iker Fuentes and my id is A01749675"]
 file.close()
 ollama_client = ollama.Client(
-    follow_redirects=True,
-
-    headers={"User-Agent":"ollama-python","Content-Type":"application/json","Accept":"application/json"},
-    timeout = None
-    
+    #follow_redirects=True,
+    headers={
+        "User-Agent": "ollama-python",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    },
+    timeout=None
 )
 ollama_client.base_url = "http://172.31.98.243:11434"
-
 
 
 collection_name = "Docs"

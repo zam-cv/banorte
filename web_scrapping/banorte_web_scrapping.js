@@ -65,7 +65,7 @@ async function main() {
         try {
             result += await scrape(link);
             count++;
-            if (count >= 20) {
+            if (count >= 5) {
                 break;
             }
         } catch (err) {
@@ -94,7 +94,7 @@ app.post('/scrape', async (req, res) => {
                 user_context: "El usuario se llama eduardo y tiene 20 años. Quiere ahorrar dinero"
             }
         };
-        const apiResponse = await axios.post('http://127.0.0.1:8000/model/selection/', jsonObject);
+        const apiResponse = await axios.post('http://127.0.0.1:8000/model/selection/publish/web_scraping', jsonObject);
         console.log("Response from target API:", apiResponse.data);
         res.status(200).send(apiResponse.data);
     } catch (err) {
