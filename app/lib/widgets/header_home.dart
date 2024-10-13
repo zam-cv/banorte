@@ -17,7 +17,7 @@ class HeaderHome extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-      color: const Color(0xFF070D2A), // Color de fondo oscuro como en la imagen
+      color: Theme.of(context).colorScheme.secondary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -27,38 +27,52 @@ class HeaderHome extends StatelessWidget {
               SvgPicture.asset(
                 'assets/fire.svg', // Ruta del icono fire.svg
                 height: 24, // Ajusta el tamaño del icono
-                color: Colors.red, // Color rojo para el icono
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context)
+                      .colorScheme
+                      .primary, // Aplicar el color primario del tema
+                  BlendMode.srcIn,
+                ),
               ),
+
               const SizedBox(width: 8), // Espacio entre el icono y el texto
               Text(
                 '$number/$denominator',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: Colors.grey, // Color blanco
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          // Logo (centro)
+          // Logo (centro) con el color principal del tema
           SvgPicture.asset(
             'assets/logo.svg', // Ruta del logo.svg
             height: 24, // Ajusta el tamaño del logo
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).colorScheme.primary, // Color del tema
+              BlendMode.srcIn,
+            ),
           ),
           // Icono de usuario (lado derecho) envuelto en GestureDetector
           GestureDetector(
             onTap: () {
+              // Navegamos a Profile
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const ProfilePage()), // Navegamos a Profile
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
               );
             },
             child: SvgPicture.asset(
               'assets/user.svg', // Ruta del icono user.svg
               height: 24, // Ajusta el tamaño del icono
-              color: Colors.red, // Color rojo para el icono
+              colorFilter: ColorFilter.mode(
+                Theme.of(context)
+                    .colorScheme
+                    .primary, // Aplicar el color primario
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ],

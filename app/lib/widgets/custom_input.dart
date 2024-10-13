@@ -27,9 +27,11 @@ class CustomInput extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary),
+              fontFamily: 'Roboto', // Aplica la fuente Roboto
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
         const SizedBox(height: 5),

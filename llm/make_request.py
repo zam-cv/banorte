@@ -11,25 +11,17 @@ from vertexai.generative_models import (
 )
 
 class Objective(enum.Enum):
+    '''This enum class works mainly for clarity and to encapsulate the different objectives that the AI can have.'''
     
-    BANORTE_ASSISTANT = '''Eres BanorteAI, siempre te presentas así. Eres un asistente virtual de Banorte especializado en educación financiera.",
-    
-        Recuerda que Banorte es uno de los bancos más grandes y reconocidos de México1
-        . Ofrece una amplia gama de servicios financieros, incluyendo cuentas de ahorro, préstamos, seguros, inversiones y asesoría financiera
-        . Banorte también tiene una fuerte presencia en línea, permitiendo a sus clientes gestionar sus cuentas y realizar transacciones de manera segura y conveniente
-
-    
-        "Tu misión es ayudar a los usuarios a aprender sobre finanzas personales a través de juegos interactivos.",
+    BANORTE_ASSISTANT = '''
+        Eres BanorteAI, siempre te presentas así. Eres un asistente virtual de Banorte especializado en educación financiera,
+        Recuerda que Banorte es uno de los bancos más grandes y reconocidos de México. Ofrece una amplia gama de servicios financieros, incluyendo cuentas de ahorro, préstamos, seguros, inversiones y asesoría financiera
+        Banorte también tiene una fuerte presencia en línea, permitiendo a sus clientes gestionar sus cuentas y realizar transacciones de manera segura y conveniente
+        Tu misión es ayudar a los usuarios a aprender sobre finanzas personales a través de juegos interactivos, preguntas y respuestas, y consejos prácticos.
+        Debes de proporcionar respuestas claras y útiles sobre conceptos financieros, estrategias de ahorro, inversión y manejo de deudas, asegurándote de que las explicaciones sean fáciles de entender y atractivas para los usuarios.
+        Recuerda que los usuarios podrán ser de todas las edades  y niveles de conocimiento financiero. Asimismo, es importante ayudar al usuario seguir aprendiendo sobre la educación financiera y dar nuevos conocimientos al usuario.
         
-        "Proporciona respuestas claras y útiles sobre conceptos financieros, estrategias de ahorro, inversión y manejo de deudas.",
-        
-        "Asegúrate de que las explicaciones sean fáciles de entender y atractivas para los usuarios.",
-        
-        "Los usuarios podrán ser de todas las edades",
-        
-        "Es importante ayudar al usuario seguir aprendiendo sobre la educación financiera y dar nuevos conocimientos al usuario.
-        
-        Vas a recibir un JSON con la siguiente estructura:
+        Cuando se te haga una petición, vas a recibir un JSON con la siguiente estructura:
         {
             "prompt": "user input",
             "category": "category",
@@ -42,14 +34,19 @@ class Objective(enum.Enum):
         "category": es la categoria de la pregunta. Puede ser: libertad financiera, seguridad financiera, resiliencia financiera, control financiero
         information_context: Es la informacion que debes de referenciar para responder la pregunta
         user_context: Es la informacion del usuario que haz de utilizar para dar una respuesta personalizada
+        BANORTE_DATASOURCE: Es una fuente de webscraping sobre las noticias más recientes en internet que contiene información sobre Banorte que puedes utilizar para responder las preguntas.
+        
+        Deberás hacer uso de esta información para personalziar tus respuestas y dar información relevante al usuario.
 
         '''
-    DUMMY = '''Eres un generador de JSON para pruebas Todas tus respuestas deben de ser en español. Debes generar JSONS con el formato
+    DUMMY = '''
+        Eres un generador de JSON para pruebas del modelo con el objetivo BANORTE_ASSISTANT. Todas tus respuestas deben de ser en español y éstas han de llevar el formato de JSONS, que coincida con el siguiente:
         {
-            'prompt': 'user input',
-            'category': 'category',
-            'information_context" :"data to reference"
-            'user_context' : "Information about the user"
+            'prompt': 'pregunta que hace el usuario',
+            'category': 'categoria de la pregunta. Puende ser: libertad financiera, seguridad financiera, resiliencia financiera, control financiero',
+            'information_context" :"información base para responder la pregunta",
+            'user_context' : "información del usuario que haz de utilizar para dar una respuesta personalizada",
+            'BANORTE_DATASOURCE': "datos para referenciar"
         }
          "prompt": puede ser cualquier pregunta de educación financiera, dudas sobre tarjetas de crédito, seguros, etc.
          "category": es la categoria de la pregunta. Puede ser: libertad financiera, seguridad financiera, resiliencia financiera, control financiero
@@ -106,7 +103,7 @@ class Objective(enum.Enum):
         "information_context": es la informacion que debes de referenciar para responder la pregunta. Información sobre el tema de la pregunta
         "user_context": es la informacion del usuario que haz de utilizar para dar una respuesta personalizada. Información sobre el usuario que hace la pregunta. Sobre su trasfondo, nivel de conocimiento y experiencias previas
         
-        En el parámetro de user_context se mide el conocimiento del usuario, clasificándolo en baje, medio y alto.
+        En el parámetro de user_context se mide el conocimiento del usuario, clasificándolo en bajo, medio y alto.
 
         Las preguntas han de ser acorde a la categoria de la pregunta y el contexto del usuario, para que sea una experiencia educativa y atractiva para el usuario.
         
@@ -121,7 +118,7 @@ class Objective(enum.Enum):
         
 
 class AiRequests():
-    
+    '''This class is used to encapsulate the requests to the AI model. It is used to generate content based on the objective and the user input.'''
     def __init__(self,objective : Objective,what_should_i_do : str) -> None:
         vertexai.init(project=PROJECT_ID, location=LOCATION)
         
@@ -148,6 +145,7 @@ class AiRequests():
         self.contents = []
         
     def make_prompt(self,prompt : str)->str:
+        '''This method is used to generate content based on the user input. It returns the response from the AI model.'''
         prompt :str = f"""
                 User input: {prompt}.
                 Answer:
@@ -161,6 +159,7 @@ class AiRequests():
         return response.text
     
     def make_prompt_with_context(self,prompt:str,context:str)->str:
+        '''This method is used to generate content based on the user input and the context. It returns the response from the AI model.'''
         prompt :str = f"""
                 User input: {prompt}.
                 Answer:
@@ -175,6 +174,7 @@ class AiRequests():
         return response.text 
     
     def make_prompt_with_from_json(self, context:json)->str:
+        '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         data = json.loads(context)
         
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
@@ -194,6 +194,7 @@ class AiRequests():
         return response.text 
 
     def get_context_data(self)->str:
+        '''This method is used to get the context data from the Output.txt file. It returns the context data.'''
         try:
             with open('Output.txt', 'r', encoding='utf-8') as file:
                 
@@ -205,6 +206,7 @@ class AiRequests():
             return "Error decoding the context data."
 
     def make_prompt_with_from_json_use_context(self, context:json)->str:
+        '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
         data = json.loads(context)
         information = self.get_context_data()
@@ -226,7 +228,9 @@ class AiRequests():
             )
         return response.text
     
+    
     def generate_questions_with_json(self, context: json) -> str:
+        '''This method is used to generate questions based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
         data = json.loads(context)
         information = self.get_context_data()

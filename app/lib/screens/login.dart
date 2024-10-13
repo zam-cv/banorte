@@ -5,7 +5,6 @@ import 'package:app/widgets/custom_input_password.dart';
 import 'package:app/widgets/degraded.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:app/widgets/custom_title.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Login extends StatelessWidget {
@@ -25,23 +24,29 @@ class Login extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       'assets/logo.svg',
-                      width: 60,
-                      height: 60,
+                      height: 35,
                       colorFilter: ColorFilter.mode(
                         Theme.of(context).colorScheme.primary,
                         BlendMode.srcIn,
                       ),
                     ),
                     const SizedBox(height: 13),
-                    CustomTitle(
-                      value: "BANORTE AI",
-                      color: Theme.of(context).colorScheme.primary,
+                    // Texto grande con el estilo del Theme
+                    Text(
+                      "Academia Financiera",
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                     ),
-                    const Text(
+                    const SizedBox(height: 5),
+                    // Texto pequeño con el estilo del Theme
+                    Text(
                       'Educación Financiera en la palma de tu mano',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    )
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ],
                 ),
                 Expanded(
@@ -50,7 +55,11 @@ class Login extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const CustomTitle(value: '¡Bienvenido!'),
+                        // Texto grande con el estilo del Theme
+                        Text(
+                          '¡Bienvenido!',
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
                         const SizedBox(height: 10),
                         const CustomInput(
                           label: "Correo electronico",
@@ -69,13 +78,17 @@ class Login extends StatelessWidget {
                               Navigator.pushNamed(
                                   context, AppRoutes.forgotPassword);
                             },
+                            // Texto pequeño con el estilo del Theme
                             child: Text(
                               'Olvidé mi contraseña',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ),
                         ),
@@ -88,24 +101,29 @@ class Login extends StatelessWidget {
                     RichText(
                       text: TextSpan(
                         children: [
-                          const TextSpan(
+                          TextSpan(
                             text: '¿No tienes cuenta?  ',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                           TextSpan(
                             text: 'Regístrate',
-                            style: const TextStyle(
-                              color: Colors.white,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Navigator.pushNamed(context, AppRoutes.signup);
                               },
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -117,11 +135,19 @@ class Login extends StatelessWidget {
                         onPressed: () {
                           Navigator.pushNamed(context, AppRoutes.home);
                         },
+                        // Aplica el estilo en el child del botón
+                        child: Text(
+                          'Iniciar sesión',
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: Colors.white,
+                                  ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
                   ],
-                )
+                ),
               ],
             ),
           ),
