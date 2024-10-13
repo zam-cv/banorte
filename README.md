@@ -93,4 +93,5 @@ flutter run
 ```
 
 #### Diagrama de componentes
-Components.png
+
+![Componentes](Components.png)
