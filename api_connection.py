@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 from fastapi.encoders import jsonable_encoder
 from llm.FastApi_llm_receiver import FastApiLLMReceiver
 import json
+from achivos_proc import archivo_procesado
 
 app = FastAPI()
 
@@ -39,7 +40,7 @@ def create_item(general_format: GeneralFormat):
     if general_format.model == 'summary':
         return llm_fast_api.summarize()
     elif general_format.model == 'game_banorte_ai_question':
-        return json.dumps(llm_fast_api.generate_questions())
+        return llm_fast_api.generate_questions()
     elif general_format.model == 'banorte_ai':
         return llm_fast_api.banortea_ai()
     elif general_format.model == 'game_banorte_ai':
@@ -58,6 +59,13 @@ def update_item(item_id: int, item: Item):
 @app.delete("/items/{item_id}")
 def delete_item(item_id: int):
     return {"message": f"Item {item_id} deleted"}
+
+@app.post("/archivo/")
+async def upload_file(file: UploadFile = File(...)):
+    contents = await file.read()
+    # Process the file contents here
+    processed_content = archivo_procesado(contents)
+    return {"content": processed_content}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
