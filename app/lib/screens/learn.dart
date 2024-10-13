@@ -136,7 +136,7 @@ class _LearnPageState extends State<LearnPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              'assets/practice_icon.svg', // Ruta del icono de práctica en SVG
+              'assets/learn_icon.svg', // Ruta del icono de práctica en SVG
               height: 50, // Ajusta el tamaño del icono
               fit: BoxFit.contain, // Asegura que la imagen no se distorsione
             ),
@@ -281,7 +281,7 @@ class _LearnPageState extends State<LearnPage> {
           ),
           const SizedBox(height: 5), // Espaciado entre el logo y el texto
           Text(
-            'Practica',
+            'Aprende',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
