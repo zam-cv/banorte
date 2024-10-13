@@ -16,7 +16,7 @@ class FastApiLLMReceiver():
         elif objective == "game_banorte_ai":
             self.model =  AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.  Do it in spanish")
         elif objective == "game_banorte_ai_question":
-            self.model =  AiRequests(Objective.GAME_BANORTE_AI_QUESTION, "You are guiding the player through the game. You must generate questions for the game.  Do it in spanish")
+            self.model =  AiRequests(Objective.GAME_BANORTE_AI_QUESTION, "Genera una pregunta para el juego, siguiendo el formato pregunta,opción1,opción2,opción3,opción4,respuesta correcta. No añadas Pregunta,opción1,opción2,opción3,opción4,respuesta correcta al inicio de la pregunta.  Do it in spanish")
         elif objective == "summary":
             self.model =  AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE, "You must summarize and categorize the data.  Do it in spanish")
         elif objective == 'banorte_ai':
@@ -28,9 +28,16 @@ class FastApiLLMReceiver():
         if self.data['model'] == 'summary':
             return self.model.segment_context_data(self.data['values']['prompt'])
         
-    def generate_questions(self):
+    def generate_questions(self)->json:
         if self.data['model'] == 'game_banorte_ai_question':
-            return self.model.generate_questions_with_json(self.data['values'])
+            pregunta = self.model.generate_questions_with_json(self.data['values']).strip().split(",")
+            dict_pregunta = {
+                "question": pregunta[0],
+                "options": pregunta[1:5],
+                "correct_answer": pregunta[5]
+            }
+            print(json.dumps(dict_pregunta))
+            return json.dumps(dict_pregunta,ensure_ascii=False)
         
     def banortea_ai(self):
         if self.data['model'] == 'banorte_ai':

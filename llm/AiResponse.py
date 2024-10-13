@@ -110,12 +110,9 @@ class Objective(enum.Enum):
 
         Las preguntas han de ser acorde a la categoria de la pregunta y el contexto del usuario, para que sea una experiencia educativa y atractiva para el usuario.
         
-        Regresa un JSON con la siguiente estructura:
-        {
-            "question": "user input",
-            "options": ["option1", "option2", "option3", "option4"],
-            "correct_answer": "correct option"
-        }
+        Regresa una respuesta con la siguiente estructura:
+        
+        pregunta,opción 1, opción2, opción3, opción4, respuesta correcta
     
     '''
     
