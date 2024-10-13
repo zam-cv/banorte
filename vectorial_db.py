@@ -113,7 +113,7 @@ class VectorialDB():
     
 if __name__ == "__main__":
     # Define los datos de prueba
-    file = open("vectorBase.txt","r",encoding="utf-8")
+    file = open("vectorBase2.txt","r",encoding="utf-8")
     text = file.read().split("\n")
     vector = VectorialDB("BanorteDataBase",text)
     file.close()

@@ -36,12 +36,6 @@ cd app\
 flutter pub get
 ```
 
-4. Corre la aplicacion
-
-```bash
-flutter run
-```
-
 4. Abra otra terminal en el directorio raiz del proyecto y acceder a `llm`
 
 ```bash
@@ -63,7 +57,17 @@ llm/install_dependencies.sh
 ```
 6. Descargar y autenticarte con google SDK
 
-7. Correr los servidores en el siguiente órden.
+
+7. Create a `.env` file in the `api_gateway` directory with the following content
+
+```bash
+PORT=3000
+SECRET_KEY=secret_key
+LLM_HOST=127.0.0.1
+LLM_PORT=8000
+```
+
+8. Correr los servidores en el siguiente órden.
 
 ```bash
 ollama run gemma2:9b
@@ -82,21 +86,8 @@ go run main.go
 docker run -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.24.8
 ```
 
-2. Create a `.env` file in the `api_gateway` directory with the following content
-
-```bash
-PORT=3000
-SECRET_KEY=secret_key
-LLM_HOST=127.0.0.1
-LLM_PORT=8000
+9. Correr la aplicación con flutter
 ```
-
-3. Run the following command to start the development environment
-
-```bash
-docker run -d --name=redpanda \
-  -p 9092:9092 \
-  -p 9644:9644 \
-  docker.redpanda.com/vectorized/redpanda:latest \
-  redpanda start
+cd app
+flutter run
 ```
