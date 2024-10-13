@@ -10,6 +10,7 @@ import 'package:app/screens/practice.dart';
 import 'package:app/screens/news.dart';
 import 'package:app/screens/profile.dart';
 import 'package:app/screens/splash_screen.dart'; // Importa la pantalla de splash
+import 'package:app/screens/settings.dart';
 
 class BaseLayout extends StatelessWidget {
   final Widget child;
@@ -50,6 +51,7 @@ class AppRoutes {
   static const String practice = '/practice';
   static const String news = '/news';
   static const String profile = '/profile';
+  static const String settings = '/settings';
 
   static final Map<String, Widget> routes = {
     splash: const SplashScreen(), // SplashScreen como ruta predeterminada
@@ -61,6 +63,7 @@ class AppRoutes {
     practice: const PracticePage(),
     news: const NewsPage(),
     profile: const ProfilePage(),
+    settings: const SettingsPage(),
   };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
