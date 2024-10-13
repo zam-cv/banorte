@@ -20,4 +20,5 @@ func GetRoutes(router *gin.Engine) {
 
 	addAuthRoutes(api)
 	addChatRoutes(api)
+	addNoticesRoutes(api)
 }
