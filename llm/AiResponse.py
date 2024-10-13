@@ -143,7 +143,11 @@ class Objective(enum.Enum):
         Las preguntas pueden ser de cualquier categoría de educación financiera, como ahorro, inversión, deudas, seguros, etc.
         Tu misión es hacer preguntas abiertas a los usuarios para evaluar su conocimiento financiero y ayudarlos a aprender más sobre finanzas personales.
         Debes asegurarte de que las preguntas sean claras y fáciles de entender, y que ayuden a los usuarios a reflexionar sobre sus conocimientos y experiencias financieras.
-        Debes de devolver una respuesta:
+        Debes de devolver una respuesta en el siguiente formato
+        
+        "question","option1","option2","option3","option4","correct option"
+
+        la pregunta ha de estar enfocada de manera práctica, y ha de aplicarse a una situación real. Las opciones han de ser alternativas que una persona en esa situación se encontraría.
         
         '''
 

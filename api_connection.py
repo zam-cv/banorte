@@ -9,7 +9,7 @@ import json
 from fastapi.responses import JSONResponse
 from achivos_proc import archivo_procesado
 from vectorial_db import VectorialDB
-
+import random
 
 app = FastAPI()
 
@@ -55,6 +55,20 @@ def create_question(question: Question):
     information_context.client.connect()
     temp_dict["information_context"] = information_context.query_collection(f'Dame información de la categoría {temp_dict["category"]}')
     information_context.client.connect()
+    llm_fast_api = FastApiLLMReceiver(temp_dict)
+    result = llm_fast_api.generate_questions()
+    return JSONResponse(content=result)
+
+@app.get("/model/selection/questions/situation")
+def create_situation():
+    temp_dict = {"model":"banorte_ai_question","category":"Situación"}
+    
+    categorias = ['Salud Financiera','Resiliencia Financiera','Educación Financiera','Situación','Inversiones','Ahorro','Crédito','Seguros','Banca Digital','Banca Móvil','Banca en Línea','Banca Personal','Banca Empresarial','Banca Corporativa','Banca de Inversión','Banca Privada','Banca Patrimonial']
+    valor = random.choice(categorias)
+    
+    value = VectorialDB("BanorteDataBase",f'Dame información para realizar una pregunta sobre la categoría {valor}')
+    value.client.connect()
+    temp_dict["information_context"] = value.query_collection(f'Dame información para realizar una pregunta sobre la categoría {valor}. La información me ha de permitir plantear una situación')
     llm_fast_api = FastApiLLMReceiver(temp_dict)
     result = llm_fast_api.generate_questions()
     return JSONResponse(content=result)
