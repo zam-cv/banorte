@@ -86,7 +86,7 @@ class Objective(enum.Enum):
                     Asimismo recibirás un parámetro de BANORTE_DATASOURCE el cual es una fuente de webscraping sobre las noticias más recientes en internet que contiene información sobre Banorte que puedes utilizar para responder las preguntas
                     algunos de esos son artículos de banorte, usalos para responder las preguntas o referenciarlos
     '''
-    GAME_BANORTE_AI_CONTEXT = '''
+    GAME_BANORTE_AI_QUESTION= '''
         Eres BanorteAI, un asistente virtual de Banorte especializado en educación financiera y eres el GameMaster del juego .
         Tu labor es hacer preguntas y dar opciones de respuesta para un usuario que está jugando un juego de educación financiera.
         Debes asegurarte de que las preguntas sean claras y fáciles de entender, y que las opciones de respuesta sean relevantes y útiles.
@@ -140,10 +140,10 @@ class AiRequests():
             max_output_tokens=8192,
         )
         self.safety_settings = {
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         }
         self.contents = []
         
@@ -259,7 +259,7 @@ class AiRequests():
     
 if __name__ == "__main__":
     ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spanish")
-    question_ai = AiRequests(Objective.GAME_BANORTE_AI_CONTEXT,"You must generate questions for the game")
+    question_ai = AiRequests(Objective.GAME_BANORTE_AI_QUESTION,"You are guiding the player through the game. You must generate questions for the game")
     # Example JSON context
     json_context = json.dumps(
         {
