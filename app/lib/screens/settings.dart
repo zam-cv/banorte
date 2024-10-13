@@ -25,13 +25,13 @@ class _ProfilePageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF00020C), // Fondo oscuro
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity,
-            color: const Color(0xFF070D2A), // Fondo azul para el logo
+            color: Theme.of(context).colorScheme.secondary,
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -39,26 +39,29 @@ class _ProfilePageState extends State<SettingsPage> {
                 SvgPicture.asset(
                   'assets/logo.svg', // Logo en SVG
                   height: 30,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.primary, // Color del logo
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  'Ajustes', // Título de la página
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Título "Ajustes" usando los estilos del Theme
+                Text(
+                  'Ajustes',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Colors.white, // Color blanco
+                      ),
                 ),
               ],
             ),
           ),
-          // Contenido del
+          // Contenido de los ajustes
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Campos de texto
+                  // Botón "Conócenos" con el estilo del Theme
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Button(
@@ -66,25 +69,34 @@ class _ProfilePageState extends State<SettingsPage> {
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.home);
                       },
+                      child: Text(
+                        'Conócenos',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: Colors.white, // Color del texto del botón
+                            ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),
-                  // Texto para iniciar sesión
+                  // Texto "¿Ya tienes cuenta?" usando los estilos del Theme
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
                           text: '¿Ya tienes cuenta? ',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Botón de Registro que abre el enlace de Banorte
+                  // Botón de Registro con el enlace de Banorte
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Button(
@@ -112,6 +124,12 @@ class _ProfilePageState extends State<SettingsPage> {
                           );
                         }
                       },
+                      child: Text(
+                        'Registrar',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: Colors.white, // Color del texto del botón
+                            ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20), // Padding extra debajo del botón
@@ -125,45 +143,6 @@ class _ProfilePageState extends State<SettingsPage> {
       bottomNavigationBar: CustomNavBar(
         onTabSelected: _onItemTapped, // Función para manejar las selecciones
         selectedIndex: _selectedIndex, // Perfil está seleccionada
-      ),
-    );
-  }
-
-  // Widget para las rachas con el ícono de fuego
-  Widget buildStreakTile(
-      BuildContext context, String title, String count, String iconPath) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0x84131B44), // Fondo oscuro con 52% de opacidad
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          SvgPicture.asset(
-            iconPath, // Ícono de fuego
-            width: 24,
-            height: 24,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Text(
-            count,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
-        ],
       ),
     );
   }
