@@ -48,11 +48,13 @@ def get_web_scraping():
 
 @app.post("/model/selection/questions")
 def create_question(question: Question):
-    llm_fast_api = FastApiLLMReceiver(question)
-    value = VectorialDB("Questions",'---')
-    if value.collection_exists("Questions",value.get_weaviate_client()):
-        value = VectorialDB("Questions",question.values)
-        result = {"response":value.query_collection("Questions",question.values.prompt)}
+    question_json = jsonable_encoder(question)
+    llm_fast_api = FastApiLLMReceiver(question_json)
+    value = VectorialDB("Questions",question_json)
+    value.client.connect()
+    if value.collection_exists("Questions"):
+        value = VectorialDB("Questions",question_json)
+        result = {"response":value.query_collection("Questions",question.prompt)}
     else:
         result = llm_fast_api.generate_questions()
     return JSONResponse(content=result)
@@ -64,7 +66,8 @@ def set_web_scraping(general_format: GeneralFormat):
     llm_fast_api = FastApiLLMReceiver(general_format_json)
     if general_format.model == 'summary':
         value = VectorialDB("Banorte",[general_format.values.prompt])
-        if value.collection_exists("Banorte",value.get_weaviate_client()):
+        value.client.connect()
+        if value.collection_exists("Banorte"):
             result = {"response":value.query_collection(general_format.values.prompt)}
         else:
             result = llm_fast_api.summarize()
@@ -78,8 +81,9 @@ def create_item(general_format: GeneralFormat):
     
     llm_fast_api = FastApiLLMReceiver(general_format_json)
     if general_format.model == 'banorte_ai':
-        value = VectorialDB("BanorteAI",'---')
-        if value.collection_exists("BanorteAI",value.get_weaviate_client()):
+        value = VectorialDB("BanorteAI",general_format.values)
+        value.client.connect()
+        if value.collection_exists("BanorteAI"):
             value = VectorialDB("BanorteAI",general_format.values)
             result = {"response":value.query_collection("BanorteAI",general_format.values.prompt)}
             
@@ -87,16 +91,18 @@ def create_item(general_format: GeneralFormat):
             result = llm_fast_api.banortea_ai()
             
     elif general_format.model == 'game_banorte_ai':
-        value = VectorialDB("GameBanorteAI",'---')
-        if value.collection_exists("GameBanorteAI",value.get_weaviate_client()):
+        value = VectorialDB("GameBanorteAI",general_format.values)
+        value.client.connect()
+        if value.collection_exists("GameBanorteAI"):
             value = VectorialDB("GameBanorteAI",general_format.values)
             result = {"response":value.query_collection("GameBanorteAI",general_format.values.prompt)}
         else:
             result = llm_fast_api.game_banorte_ai()
             
     elif general_format.model == 'sample':
-        value = VectorialDB("Sample",'---')
-        if value.collection_exists("Sample",value.get_weaviate_client()):
+        value = VectorialDB("Sample",general_format.values)
+        value.client.connect()
+        if value.collection_exists("Sample"):
             value = VectorialDB("Sample",general_format.values)
             result = {"response":value.query_collection("Sample",general_format.values.prompt)}
         else:

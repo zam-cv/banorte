@@ -73,8 +73,8 @@ class VectorialDB():
         output = self.ollama_client.generate(model="gemma2:9b", prompt=prompt_template, system="You are ...")
         return output['response']
 
-    def collection_exists(self,collection_name,client):
-        return collection_name in client.collections.list_all().keys()
+    def collection_exists(self,collection_name):
+        return collection_name in self.client.collections.list_all().keys()
 
     def add_documents_to_collection(self):
         existing_documents = self.collection.query.fetch_objects(limit=len(self.documents)).objects
