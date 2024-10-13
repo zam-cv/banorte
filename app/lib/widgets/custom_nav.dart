@@ -35,8 +35,7 @@ class CustomNavBar extends StatelessWidget {
                 context, '/practice'); // Navegar a la pantalla Practice
             break;
           case 4:
-            Navigator.pushNamed(
-                context, '/profile'); // Navegar a la pantalla Profile (CAMBIAR)
+            // Navegar a la pantalla Profile (CAMBIAR)
             break;
         }
       },
