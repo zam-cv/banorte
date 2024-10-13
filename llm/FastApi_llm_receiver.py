@@ -43,6 +43,8 @@ class FastApiLLMReceiver():
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
             while(len(pregunta)<5):
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+                if len(pregunta) < 5:
+                    continue
                 dict_pregunta = {
                     "question": pregunta[0],
                     "options": pregunta[1:5],
