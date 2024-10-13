@@ -27,7 +27,7 @@ file.close()
 ollama_client = ollama.Client(
     follow_redirects=True,
 
-    headers={"User-Agent":"weaviate-python-client","Content-Type":"application/json","Accept":"application/json"},
+    headers={"User-Agent":"ollama-python","Content-Type":"application/json","Accept":"application/json"},
     timeout = None
     
 )
