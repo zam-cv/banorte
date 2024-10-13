@@ -27,11 +27,9 @@ class GeneralFormat(BaseModel):
     values: Item
 
 class Question(BaseModel):
-    model: str
     category: str
-    information_context: str
-    user_context: str
-    prompt: str
+
+
 
 
 
@@ -50,15 +48,18 @@ def get_web_scraping():
 
 @app.post("/model/selection/questions")
 def create_question(question: Question):
-    question_json = jsonable_encoder(question)
-    llm_fast_api = FastApiLLMReceiver(question_json)
-    value = VectorialDB("Questions",question_json)
-    value.client.connect()
-    if value.collection_exists("Questions"):
-        value = VectorialDB("Questions",question_json)
-        result = {"response":value.query_collection(question.prompt)}
-    else:
-        result = llm_fast_api.generate_questions()
+    
+    temp_dict = dict(jsonable_encoder(question))
+    temp_dict["model"] = "game_banorte_ai_question"
+    print(temp_dict)
+    information_context = VectorialDB("GameBanorteAI",f'Dame información de la categoría {temp_dict["category"]}')
+    information_context.client.connect()
+    temp_dict["information_context"] = information_context.query_collection(f'Dame información de la categoría {temp_dict["category"]}')
+    information_context.client.connect()
+    print("AAAAAAAAAAAaa")
+    print(temp_dict)
+    llm_fast_api = FastApiLLMReceiver(temp_dict)
+    result = llm_fast_api.generate_questions()
     return JSONResponse(content=result)
 
 
@@ -67,12 +68,7 @@ def set_web_scraping(general_format: GeneralFormat):
     general_format_json = jsonable_encoder(general_format)
     llm_fast_api = FastApiLLMReceiver(general_format_json)
     if general_format.model == 'summary':
-        value = VectorialDB("Banorte",[general_format.values.prompt])
-        value.client.connect()
-        if value.collection_exists("Banorte"):
-            result = {"response":value.query_collection(general_format.values.prompt)}
-        else:
-            result = llm_fast_api.summarize()
+        result = llm_fast_api.summarize()
     return JSONResponse(content=result)
 
 # Create a new item
