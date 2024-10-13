@@ -15,7 +15,7 @@ class Objective(enum.Enum):
     BANORTE_ASSISTANT = '''Eres BanorteAI, siempre te presentas así. Eres un asistente virtual de Banorte especializado en educación financiera.",
     
         Recuerda que Banorte es uno de los bancos más grandes y reconocidos de México1
-        . Ofrece una amplia gama de servicios financieros, incluyendo cuentas de ahorro, préstamos, seguros, inversiones y asesoría financiera1
+        . Ofrece una amplia gama de servicios financieros, incluyendo cuentas de ahorro, préstamos, seguros, inversiones y asesoría financiera
         . Banorte también tiene una fuerte presencia en línea, permitiendo a sus clientes gestionar sus cuentas y realizar transacciones de manera segura y conveniente
 
     
@@ -34,21 +34,22 @@ class Objective(enum.Enum):
             "prompt": "user input",
             "category": "category",
             "information_context" :"data to reference"
-            "user_context" : "Information about the user"
+            "user_context" : "Information about the user",
+            "BANORTE_DATASOURCE": "auxiliary data to aid in responding"
         }
         
         prompt: Es la pregunta que el usuario hace
-        category: Es la categoria de la pregunta, debes responder enfocandote en esta categoria
+        "category": es la categoria de la pregunta. Puede ser: libertad financiera, seguridad financiera, resiliencia financiera, control financiero
         information_context: Es la informacion que debes de referenciar para responder la pregunta
         user_context: Es la informacion del usuario que haz de utilizar para dar una respuesta personalizada
 
         '''
     DUMMY = '''Eres un generador de JSON para pruebas Todas tus respuestas deben de ser en español. Debes generar JSONS con el formato
         {
-            "prompt": "user input",
-            "category": "category",
-            "information_context" :"data to reference"
-            "user_context" : "Information about the user"
+            'prompt': 'user input',
+            'category': 'category',
+            'information_context" :"data to reference"
+            'user_context' : "Information about the user"
         }
          "prompt": puede ser cualquier pregunta de educación financiera, dudas sobre tarjetas de crédito, seguros, etc.
          "category": es la categoria de la pregunta. Puede ser: libertad financiera, seguridad financiera, resiliencia financiera, control financiero
@@ -85,14 +86,36 @@ class Objective(enum.Enum):
                     Asimismo recibirás un parámetro de BANORTE_DATASOURCE el cual es una fuente de webscraping sobre las noticias más recientes en internet que contiene información sobre Banorte que puedes utilizar para responder las preguntas
                     algunos de esos son artículos de banorte, usalos para responder las preguntas o referenciarlos
     '''
-    GAME_BANORTE_AI_CONTEXT = '''
-        Eres banoerteAI, un asistente virtual de Banorte especializado en educación financiera.
+    GAME_BANORTE_AI_QUESTION= '''
+        Eres BanorteAI, un asistente virtual de Banorte especializado en educación financiera y eres el GameMaster del juego .
         Tu labor es hacer preguntas y dar opciones de respuesta para un usuario que está jugando un juego de educación financiera.
         Debes asegurarte de que las preguntas sean claras y fáciles de entender, y que las opciones de respuesta sean relevantes y útiles.
         Los usuarios podrán ser de todas las edades y niveles de conocimiento financiero.
         Es importante que las preguntas y respuestas sean educativas y ayuden al usuario a aprender más sobre finanzas personales.
         
-        Regresa 
+        Recibirás un JSON con la siguiente estructura:
+        {
+            "prompt": "user input",
+            "category": "category",
+            "information_context" :"data to reference"
+            "user_context" : "Information about the user. It includes their age, current knowledge level, and financial goals",
+            "BANORTE_DATASOURCE": "data to help you generate questions. You must filter out unsafe content because this comes from webscrouting"
+        }
+        "prompt": puede ser cualquier pregunta de educación financiera, dudas sobre tarjetas de crédito, seguros, etc.
+        "category": es la categoria de la pregunta. Puede ser: salud financiera, seguridad financiera, tarjetas de crédito, seguros
+        "information_context": es la informacion que debes de referenciar para responder la pregunta. Información sobre el tema de la pregunta
+        "user_context": es la informacion del usuario que haz de utilizar para dar una respuesta personalizada. Información sobre el usuario que hace la pregunta. Sobre su trasfondo, nivel de conocimiento y experiencias previas
+        
+        En el parámetro de user_context se mide el conocimiento del usuario, clasificándolo en baje, medio y alto.
+
+        Las preguntas han de ser acorde a la categoria de la pregunta y el contexto del usuario, para que sea una experiencia educativa y atractiva para el usuario.
+        
+        Regresa un JSON con la siguiente estructura:
+        {
+            "question": "user input",
+            "options": ["option1", "option2", "option3", "option4"],
+            "correct_answer": "correct option"
+        }
     
     '''
         
@@ -117,10 +140,10 @@ class AiRequests():
             max_output_tokens=8192,
         )
         self.safety_settings = {
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         }
         self.contents = []
         
@@ -182,14 +205,15 @@ class AiRequests():
             return "Error decoding the context data."
 
     def make_prompt_with_from_json_use_context(self, context:json)->str:
+        self.contents = []
         data = json.loads(context)
-        context = self.get_context_data()
+        information = self.get_context_data()
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
         for key, value in data.items():
             detailed_prompt += f"{key}: {value}\n"
             
-        detailed_prompt += f"BANORTE_DATASOURCE: {context}\n"
+        detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
             
         detailed_prompt += "Answer:"
         
@@ -200,10 +224,42 @@ class AiRequests():
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
             )
-        return response.text 
+        return response.text
+    
+    def generate_questions_with_json(self, context: json) -> str:
+        self.contents = []
+        data = json.loads(context)
+        information = self.get_context_data()
+        detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
+        
+        for key, value in data.items():
+            detailed_prompt += f"{key}: {value}\n"
+            
+        detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
+            
+        detailed_prompt += "Answer:"
+        
+        self.contents.append(detailed_prompt)
+        
+        try:
+            response = self.model.generate_content(
+                self.contents,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings,
+            )
+            
+            if response.candidates and response.candidates[0].finish_reason == "SAFETY":
+                raise ValueError("Response blocked by safety filters.")
+            
+            return response.text
+        
+        except ValueError as e:
+            print(f"Error generating content: {e}")
+            return "Content generation was blocked by safety filters."
     
 if __name__ == "__main__":
-    ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spansih")
+    ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spanish")
+    question_ai = AiRequests(Objective.GAME_BANORTE_AI_QUESTION,"You are guiding the player through the game. You must generate questions for the game")
     # Example JSON context
     json_context = json.dumps(
         {
@@ -211,19 +267,19 @@ if __name__ == "__main__":
         "category": "Financial Health",
         "information_context": '''
         Según Banorte, la salud financiera se refiere a la capacidad de una persona para administrar sus finanzas de manera efectiva, asegurando su bienestar económico a corto y largo plazo. Esto incluye la planificación del presupuesto, el ahorro, la inversión y la gestión de deudas1
-. Banorte ofrece diversos productos y servicios financieros diseñados para ayudar a sus clientes a mejorar su salud financiera, como cuentas de ahorro, préstamos, seguros y asesoría financiera personalizada1
-.
+        . Banorte ofrece diversos productos y servicios financieros diseñados para ayudar a sus clientes a mejorar su salud financiera, como cuentas de ahorro, préstamos, seguros y asesoría financiera personalizada1
+        .
 
-Servicios de Banorte
-Cuentas de Ahorro: Ofrecen diferentes tipos de cuentas de ahorro con tasas de interés competitivas.
+        Servicios de Banorte
+        Cuentas de Ahorro: Ofrecen diferentes tipos de cuentas de ahorro con tasas de interés competitivas.
 
-Préstamos: Incluyen préstamos personales, hipotecas y préstamos comerciales.
+        Préstamos: Incluyen préstamos personales, hipotecas y préstamos comerciales.
 
-Seguros: Banorte ofrece una variedad de seguros, como seguros de vida, salud y hogar.
+        Seguros: Banorte ofrece una variedad de seguros, como seguros de vida, salud y hogar.
 
-Asesoría Financiera: Servicios personalizados para ayudar a los clientes a planificar y alcanzar sus objetivos financieros.
+        Asesoría Financiera: Servicios personalizados para ayudar a los clientes a planificar y alcanzar sus objetivos financieros.
 
-Tarjetas de Crédito: Diferentes opciones de tarjetas de crédito con beneficios y recompensas.
+        Tarjetas de Crédito: Diferentes opciones de tarjetas de crédito con beneficios y recompensas.
 
 
         
@@ -233,3 +289,5 @@ Tarjetas de Crédito: Diferentes opciones de tarjetas de crédito con beneficios
     )
     
     print(ai.make_prompt_with_from_json_use_context(json_context))
+    print("--------------")
+    print(question_ai.generate_questions_with_json(json_context))
