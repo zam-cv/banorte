@@ -135,4 +135,56 @@ func addAuthRoutes(rg *gin.RouterGroup) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
 		}
 	})
+
+	group.GET("/user-info", func(c *gin.Context) {
+		// Get the token from the Authorization header
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token no proporcionado"})
+			return
+		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+		// Parse and validate the token
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, jwt.ErrSignatureInvalid
+			}
+			return config.JwtSecret, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			return
+		}
+
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			// Get the user's email from the token claims
+			email, ok := claims["email"].(string)
+			if !ok {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener el email del usuario"})
+				return
+			}
+
+			// Fetch user data from Firestore
+			docSnap, err := config.FirestoreClient.Collection("users").Doc(email).Get(context.Background())
+			if err != nil {
+				log.Printf("Error al obtener datos del usuario de Firestore: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener información del usuario"})
+				return
+			}
+
+			userData := docSnap.Data()
+			// Remove sensitive information
+			delete(userData, "password")
+
+			c.JSON(http.StatusOK, gin.H{
+				"message": "Información del usuario obtenida exitosamente",
+				"user":    userData,
+			})
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+		}
+	})
 }
