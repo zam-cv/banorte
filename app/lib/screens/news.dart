@@ -23,6 +23,19 @@ class _NewsPageState extends State<NewsPage> {
     "assets/noticia_muestra7.png"
   ]; // Lista de imágenes para seleccionar aleatoriamente
 
+  final List<String> newsTitles = [
+    "Banorte lanza nuevas opciones de inversión digital",
+    "Nuevas alianzas estratégicas de Banorte para mejorar servicios bancarios",
+    "Banorte presenta plataforma para pagos internacionales",
+    "Innovaciones tecnológicas en la banca móvil de Banorte",
+    "Banorte impulsa el financiamiento para pequeñas y medianas empresas",
+    "Banorte expande su red de cajeros automáticos inteligentes",
+    "Seguridad digital: Banorte fortalece sus sistemas de protección en línea",
+    "Banorte reduce comisiones en transferencias internacionales",
+    "Nuevos créditos hipotecarios de Banorte con tasas competitivas",
+    "Banorte lanza programa de apoyo financiero a emprendedores"
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -146,6 +159,8 @@ class _NewsPageState extends State<NewsPage> {
     final random = Random(); // Instancia para generar aleatoriedad
     String randomImage = imagePaths[
         random.nextInt(imagePaths.length)]; // Selección aleatoria de la imagen
+    String randomTitle = newsTitles[
+        random.nextInt(newsTitles.length)]; // Selección aleatoria del título
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
@@ -160,7 +175,7 @@ class _NewsPageState extends State<NewsPage> {
           children: [
             // Título de la noticia
             Text(
-              'Apoyo de Banorte móvil',
+              randomTitle, // Título seleccionado aleatoriamente
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     color: Colors.white, // Aplicar el estilo de títulos grandes
                   ),
