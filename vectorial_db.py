@@ -8,9 +8,11 @@ from weaviate.classes.config import Property, DataType
 
 
 class VectorialDB():
+    '''Class to create a vectorial database'''
     def __init__(self,collection_name,data):
+        # Ignorar advertencias de recursos
         warnings.simplefilter("ignore", ResourceWarning)
-        
+        # Configurar el cliente de Ollama con la dirección IP
         self.ollama_client =  ollama.Client(
                                 #follow_redirects=True,
                                 headers={
@@ -21,7 +23,7 @@ class VectorialDB():
                                 timeout=None
                             )
         self.ollama_client.base_url = "http://172.31.98.243:11434"
-        
+        # Configurar el cliente de Weaviate
         self.documents = data
         self.collection_name = collection_name
         self.client =  self.get_weaviate_client()
@@ -34,7 +36,7 @@ class VectorialDB():
                 print(f"An error occurred: {e}")
 
         
-        
+        # Verificar si la colección existe
     def get_weaviate_client(self):
         return weaviate.connect_to_custom(
             http_host="172.31.98.243",
@@ -47,7 +49,7 @@ class VectorialDB():
             
         )
 
-
+   #Crear la colección si no existe o conectar a ella si ya existe
     def create_collection_if_not_exists(self,collection_name,client):
         """
         Crea la colección en Weaviate si no existe.
@@ -62,7 +64,7 @@ class VectorialDB():
         return client.collections.get(collection_name)
     
 
-  
+    #Generar una respuesta usando el prompt y los datos recuperados de la colección
     def generate_response(self,data, prompt):
         """
         Genera una respuesta usando el prompt y los datos recuperados de la colección.
@@ -72,11 +74,13 @@ class VectorialDB():
 
         output = self.ollama_client.generate(model="gemma2:9b", prompt=prompt_template, system="You are ...")
         return output['response']
-
+    #Verificar si la colección existe
     def collection_exists(self,collection_name):
+        '''Función para verificar si la colección existe'''
         return collection_name in self.client.collections.list_all().keys()
 
     def add_documents_to_collection(self):
+        ''' Añade los documentos a la colección'''
         existing_documents = self.collection.query.fetch_objects(limit=len(self.documents)).objects
         existing_texts = [doc.properties['text'] for doc in existing_documents]
         self.documents = [d for d in self.documents if d not in existing_texts]

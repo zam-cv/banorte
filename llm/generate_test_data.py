@@ -4,6 +4,7 @@ from llm.AiResponse import AiRequests, Objective
 categories = ['prompt', 'category', 'information_context', 'user_context']
 
 def generate_dummy():
+    '''Generate dummy data for testing'''
     ai = AiRequests(Objective.DUMMY, "You must generate dummy data for testing")
     
     result = ai.make_prompt('''Make json data for testing folowing the format: 
@@ -19,6 +20,7 @@ def generate_dummy():
 
 
 def validate_json(json_string):
+    '''Validate JSON data'''
     try:
         json_data = json.loads(json_string)
         # Check if all required categories are present
