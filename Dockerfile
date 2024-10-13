@@ -30,6 +30,9 @@ RUN wget https://archive.apache.org/dist/kafka/2.8.0/kafka_2.13-2.8.0.tgz && \
     mv kafka_2.13-2.8.0 /opt/kafka && \
     rm kafka_2.13-2.8.0.tgz
 
+RUN sed -i 's/#listeners=PLAINTEXT:\/\/:9092/listeners=PLAINTEXT:\/\/0.0.0.0:9092/' /opt/kafka/config/server.properties && \
+    echo "advertised.listeners=PLAINTEXT://localhost:9092" >> /opt/kafka/config/server.properties
+
 WORKDIR /project
 COPY . /root/
 

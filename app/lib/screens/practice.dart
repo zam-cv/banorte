@@ -117,8 +117,7 @@ class _PracticePageState extends State<PracticePage> {
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color:
-                          const Color(0x84131B44), // Color con 52% de opacidad
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(

@@ -20,11 +20,11 @@ class BaseLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 0,
+            top: 5,
           ),
           child: child,
         ),

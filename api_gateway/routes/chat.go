@@ -2,7 +2,6 @@ package routes
 
 import (
 	"api_gateway/middlewares"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,9 +9,21 @@ import (
 func addChatRoutes(rg *gin.RouterGroup) {
 	group := rg.Group("/chat")
 
-	group.GET("/messages", middlewares.AuthMiddleware(), func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Lista de mensajes",
+	group.POST("/message", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Mensaje enviado",
+		})
+	})
+
+	group.POST("/practice", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Mensaje enviado",
+		})
+	})
+
+	group.POST("/learn", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Mensaje enviado",
 		})
 	})
 }

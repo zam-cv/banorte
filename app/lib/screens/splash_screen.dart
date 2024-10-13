@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF070D2A), // Fondo azul
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: Center(
         child: FadeTransition(
           opacity: _opacityAnimation,
@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen>
               Text(
                 'El banco fuerte de México',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 18,
                 ),
               ),
