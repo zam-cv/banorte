@@ -2,6 +2,8 @@ import PyPDF2
 from docx import Document
 from pptx import Presentation
 import re
+import pytesseract
+import cv2
 
 
 # Función para identificar el tipo de archivo
@@ -19,7 +21,9 @@ def identificar_tipo_archivo(archivo_binario):
     else:
         return 'txt'
 
-archivo='prueba.pdf'    
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+archivo='a.jpg'    
 with open(archivo, 'rb') as file:
     archivo_binario = file.read()
     
@@ -58,23 +62,47 @@ elif(tipo_archivo == 'pptx'):
         for forma in diapositiva.shapes:
             if hasattr(forma, "text"):
                 texto.append(forma.text)
+elif(tipo_archivo == 'image'):
+    # Leer la imagen
+    img = cv2.imread('a.jpg')
 
+    # Convertir la imagen a escala de grises
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Aplicar umbral binario
+    _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
+
+    # Aplicar dilatación y erosión para eliminar el ruido
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+    dilated = cv2.dilate(binary, kernel, iterations=1)
+    eroded = cv2.erode(dilated, kernel, iterations=1)
+
+    # Extraer texto de la imagen usando Tesseract OCR
+    texto = pytesseract.image_to_string(eroded, lang='spa')  # Cambia 'spa' por el idioma que necesites
+    
 texto_filtrado=[]
+if tipo_archivo != 'image':
+    for linea in texto:
+        nueva_linea = ''.join(char if not regex.match(char) else ' ' for char in linea)
+        prev_char = ''
+        nueva_linea2 = ''
+        for char in nueva_linea:
+            if char == ' ' and prev_char == ' ':
+                continue
+            else:
+                nueva_linea2+=(char)
+            prev_char = char
+        texto_filtrado.append(nueva_linea2)
 
-for linea in texto:
-    nueva_linea = ''.join(char if not regex.match(char) else ' ' for char in linea)
-    prev_char = ''
-    nueva_linea2 = ''
-    for char in nueva_linea:
-        if char == ' ' and prev_char == ' ':
-            continue
-        else:
-            nueva_linea2+=(char)
-        prev_char = char
-    texto_filtrado.append(nueva_linea2)
 texto_final=''
 for linea in texto_filtrado:
     texto_final+=linea+'' if linea.endswith(' ') else linea+' '
+    
+else:
+    texto_final=""
+    for char in texto:
+        if not regex.match(char):
+            texto_final+=char
     
 print(texto_final)
 
