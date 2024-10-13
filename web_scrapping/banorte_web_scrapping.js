@@ -48,6 +48,8 @@ async function scrape(url) {
     // Combine the text content into a single string
     let result = "";
     // Concatenate the text content of the page
+
+    
     body.forEach((div) => {
         result += " " + div;
     });
