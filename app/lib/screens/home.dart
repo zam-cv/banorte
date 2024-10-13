@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_nav.dart'; // Asegúrate de importar el archivo donde creaste el CustomNavBar
+import '../widgets/header_home.dart'; // Asegúrate de importar el archivo donde creaste el HeaderHome
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,11 +22,21 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Banorte AI'),
-      ),
-      body: Center(
-        child: Text('Selected Tab: $_selectedIndex'),
+      body: Column(
+        children: [
+          // Agregamos el HeaderHome en la parte superior del cuerpo
+          HeaderHome(
+            number: _selectedIndex +
+                1, // Ejemplo: pasamos el número que deseas mostrar
+          ),
+          const SizedBox(
+              height: 20), // Espacio entre el header y el contenido principal
+          Expanded(
+            child: Center(
+              child: Text('Selected Tab: $_selectedIndex'),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CustomNavBar(
         onTabSelected: _onItemTapped,

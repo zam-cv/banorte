@@ -3,7 +3,7 @@ import 'package:flutter/services.dart'; // Import necesario para los inputFormat
 import 'package:app/widgets/custom_num_field.dart'; // Asumo que este widget está basado en el TextField
 
 class DateOfBirthFields extends StatelessWidget {
-  const DateOfBirthFields({Key? key}) : super(key: key);
+  const DateOfBirthFields({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -13,7 +13,7 @@ class CustomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: const Color(0xFF070D2A), // Fondo oscuro
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       currentIndex: selectedIndex,
       onTap: (int index) {
         onTabSelected(index);
@@ -24,7 +24,7 @@ class CustomNavBar extends StatelessWidget {
             Navigator.pushNamed(context, '/home');
             break;
           case 1:
-            // Ruta a noticias
+            Navigator.pushNamed(context, '/news'); // Navegar a la pantalla News
             break;
           case 2:
             Navigator.pushNamed(
@@ -35,7 +35,7 @@ class CustomNavBar extends StatelessWidget {
                 context, '/practice'); // Navegar a la pantalla Practice
             break;
           case 4:
-            // Ruta para configuraciones
+            Navigator.pushNamed(context, '/settings');
             break;
         }
       },
