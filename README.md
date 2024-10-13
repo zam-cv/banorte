@@ -19,20 +19,16 @@
 git clone https://github.com/zam-cv/banorte
 ```
 
-2. Install
+2. Create a `.env` file in the `api_gateway` directory with the following content
 
 ```bash
-pip install kafka-python-ng
-```
-
-3. Create a `.env` file in the `api_gateway` directory with the following content
-
-```bash
-PORT=8080
+PORT=3000
 SECRET_KEY=secret_key
+LLM_HOST=127.0.0.1
+LLM_PORT=8000
 ```
 
-4. Run the following command to start the development environment
+3. Run the following command to start the development environment
 
 ```bash
 docker run -d --name=redpanda \
