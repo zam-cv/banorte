@@ -16,7 +16,7 @@
 - [Flutter](https://docs.flutter.dev/get-started/install)
 - [Vertex](https://cloud.google.com/vertex-ai?hl=es-419)
 
-### Desarrollo
+### ¿Cómo correr nuestro proyecto?
 
 1. Clona el repositorio
 
@@ -92,6 +92,6 @@ cd app
 flutter run
 ```
 
-#### Diagrama de componentes
+## Diagrama de componentes
 
 ![Componentes](Components.png)
