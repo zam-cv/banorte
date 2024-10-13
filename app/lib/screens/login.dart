@@ -197,6 +197,7 @@ class LoginState extends State<Login> {
                               .bodyMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.tertiary,
+                                fontWeight: FontWeight.bold,
                               ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
