@@ -22,32 +22,37 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF00020C), // Fondo oscuro
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity,
-            color: const Color(0xFF070D2A), // Fondo azul para el logo
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(
-                  'assets/logo.svg', // Logo en SVG
-                  height: 30,
-                ),
-                const SizedBox(height: 5),
-                const Text(
-                  'Mi perfil', // Título de la página
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            color: Theme.of(context)
+                .colorScheme
+                .secondary, // Fondo azul para el logo
+            padding: const EdgeInsets.only(
+              top: 30, // Aumenta la distancia del logo desde la parte superior
+              bottom: 20, // Espacio debajo del logo
             ),
+            child: SvgPicture.asset(
+              'assets/logo.svg', // Logo en SVG
+              height: 30,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context)
+                    .colorScheme
+                    .primary, // Color principal del logo
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+          // Texto "Mi perfil" separado del fondo azul
+          const SizedBox(height: 30), // Espaciado entre el AppBar y "Mi perfil"
+          Text(
+            'Mi perfil', // Título de la página
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: Colors.white, // Aplicar el tema para títulos grandes
+                ),
           ),
           // Contenido del perfil
           Expanded(
@@ -56,6 +61,8 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   // Avatar con borde rojo y separación adicional
+                  const SizedBox(
+                      height: 30), // Espacio extra para centrar avatar
                   Container(
                     width: 150,
                     height: 150,

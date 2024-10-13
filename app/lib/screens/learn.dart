@@ -33,30 +33,35 @@ class _LearnPageState extends State<LearnPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF00020C), // Fondo oscuro
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity,
-            color: const Color(0xFF070D2A), // Fondo azul para el logo
+            color: Theme.of(context).colorScheme.secondary,
             padding: const EdgeInsets.symmetric(
-                vertical: 10), // Espaciado vertical para el logo
+              vertical: 10,
+            ), // Espaciado vertical para el logo
             child: Column(
               mainAxisSize: MainAxisSize.min, // Ajusta el tamaño al contenido
               children: [
                 SvgPicture.asset(
                   'assets/logo.svg', // Logo en SVG
                   height: 30,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(height: 5), // Espaciado entre el logo y el texto
-                const Text(
+                // Texto de la AppBar usando estilo del Theme
+                Text(
                   'Aprende', // Texto debajo del logo
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -64,8 +69,7 @@ class _LearnPageState extends State<LearnPage> {
 
           // Fijo: Barra de progreso con el tache personalizado en la parte inferior negra
           Container(
-            color: const Color(
-                0xFF00020C), // Fondo negro para la barra de progreso
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
               children: [
@@ -102,14 +106,13 @@ class _LearnPageState extends State<LearnPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Pregunta
-                  const Text(
+                  // Pregunta con estilo de texto grande
+                  Text(
                     'Pregunta',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 10),
                   Container(
@@ -119,21 +122,22 @@ class _LearnPageState extends State<LearnPage> {
                           const Color(0x84131B44), // Color con 52% de opacidad
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Text(
+                    child: Text(
                       '¿Cuál es el porcentaje actual del Impuesto al Valor Agregado (IVA) en México?',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                          ),
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Opciones
-                  const Text(
+                  // Opciones con estilo de texto
+                  Text(
                     'Opciones',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 10),
                   Column(
@@ -158,10 +162,12 @@ class _LearnPageState extends State<LearnPage> {
                           child: Center(
                             child: Text(
                               text,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                  ),
                             ),
                           ),
                         ),
@@ -170,27 +176,23 @@ class _LearnPageState extends State<LearnPage> {
                   ),
                   const SizedBox(height: 30),
 
-                  // Botón de comprobar
+                  // Botón de comprobar con estilo
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _checkAnswer, // Comprobar respuesta
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .primary, // Color del botón
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Comprobar',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: Colors.white,
+                            ),
                       ),
                     ),
                   ),

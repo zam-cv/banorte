@@ -22,13 +22,15 @@ class _NewsPageState extends State<NewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF00020C), // Fondo oscuro
+      backgroundColor: Theme.of(context).colorScheme.surface, // Fondo claro
       body: Column(
         children: [
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity,
-            color: const Color(0xFF070D2A), // Fondo azul para el logo
+            color: Theme.of(context)
+                .colorScheme
+                .secondary, // Fondo azul para el logo
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -36,15 +38,20 @@ class _NewsPageState extends State<NewsPage> {
                 SvgPicture.asset(
                   'assets/logo.svg', // Logo en SVG
                   height: 30,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context)
+                        .colorScheme
+                        .primary, // Logo con el color principal del tema
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Noticias', // Título de la página
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        // Aplicar el tema para títulos grandes
+                      ),
                 ),
               ],
             ),
@@ -85,22 +92,20 @@ class _NewsPageState extends State<NewsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Título de la noticia
-            const Text(
+            Text(
               'Apoyo de Banorte móvil',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    color: Colors
+                        .white, // Aplicar el estilo de títulos grandes (Gotham)
+                  ),
             ),
             const SizedBox(height: 10),
             // Contenido del texto
-            const Text(
+            Text(
               'Los clientes de la banca móvil de Grupo Financiero Banorte ahora pueden realizar pagos a cualquier parte del mundo y en diversas monedas, como dólar americano, euro, libra esterlina, franco suizo, dólar canadiense, dólar australiano, corona noruega y corona sueca.',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white, // Aplicar el estilo de cuerpo (Roboto)
+                  ),
             ),
             const SizedBox(height: 20),
             // Imagen de la noticia

@@ -33,13 +33,13 @@ class _PracticePageState extends State<PracticePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF00020C), // Fondo oscuro
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity, // Ocupa todo el ancho
-            color: const Color(0xFF070D2A), // Fondo azul para el logo
+            color: Theme.of(context).colorScheme.secondary,
             padding: const EdgeInsets.symmetric(
                 vertical: 10), // Espaciado vertical para el logo
             child: Column(
@@ -48,15 +48,19 @@ class _PracticePageState extends State<PracticePage> {
                 SvgPicture.asset(
                   'assets/logo.svg', // Logo en SVG
                   height: 30,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 const SizedBox(height: 5), // Espaciado entre el logo y el texto
-                const Text(
-                  'Practica', // Texto debajo del logo
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Texto debajo del logo
+                Text(
+                  'Practica',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -64,8 +68,7 @@ class _PracticePageState extends State<PracticePage> {
 
           // Fijo: Barra de progreso con el tache personalizado en la parte inferior negra
           Container(
-            color: const Color(
-                0xFF00020C), // Fondo negro para la barra de progreso
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
               children: [
@@ -103,13 +106,12 @@ class _PracticePageState extends State<PracticePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Pregunta
-                  const Text(
+                  Text(
                     'Pregunta',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 10),
                   Container(
@@ -119,21 +121,22 @@ class _PracticePageState extends State<PracticePage> {
                           const Color(0x84131B44), // Color con 52% de opacidad
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Acabas de recibir un depósito de 15,000 pesos por concepto de tu salario. Sabes que tienes que destinar el 10% de tu salario al ahorro y, además, debes pagar un ISR del 20%. ¿Cuánto dinero te queda después de cumplir con ambas obligaciones?',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                          ),
                     ),
                   ),
                   const SizedBox(height: 20),
 
                   // Opciones
-                  const Text(
+                  Text(
                     'Opciones',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 10),
                   Column(
@@ -158,10 +161,12 @@ class _PracticePageState extends State<PracticePage> {
                           child: Center(
                             child: Text(
                               text,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: Colors.white,
+                                  ),
                             ),
                           ),
                         ),
@@ -184,13 +189,11 @@ class _PracticePageState extends State<PracticePage> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Comprobar',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: Colors.white,
+                            ),
                       ),
                     ),
                   ),
