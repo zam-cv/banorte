@@ -1,16 +1,6 @@
 from llm.AiResponse import AiRequests, Objective
 import json
 
-		# llmReq := LLMRequest{
-		# 	Model: "banorte_ai",
-		# 	Values: map[string]string{
-		# 		"prompt":              req.Prompt,
-		# 		"category":            "chat",
-		# 		"information_context": "Eres un usuario de Banorte",
-		# 		"user_context":        "Eres un usuario de Banorte",
-		# 	},
-		# }
-
 class FastApiLLMReceiver():
     '''Clase que recibe la información de la API y la procesa para enviarla al modelo de LLM'''
     def __init__(self, data : json):
@@ -47,10 +37,13 @@ class FastApiLLMReceiver():
         '''Generate questions for the game'''
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+            
             while(len(pregunta)<5):
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
                     continue
+<<<<<<< HEAD
+=======
                 else: 
                     break
             dict_pregunta = {
@@ -64,6 +57,7 @@ class FastApiLLMReceiver():
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
                     continue
+>>>>>>> 522782b61eee058af4e1032cc54095479594e09a
                 else:
                     break
             dict_pregunta = {
