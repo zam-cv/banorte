@@ -28,7 +28,7 @@ class FastApiLLMReceiver():
         if self.data['model'] == 'summary':
             return self.model.segment_context_data(self.data['values']['prompt'])
         
-    def generate_questions(self)->json:
+    def generate_questions(self)->dict:
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['values']).strip().split(",")
             dict_pregunta = {
@@ -36,8 +36,8 @@ class FastApiLLMReceiver():
                 "options": pregunta[1:5],
                 "correct_answer": pregunta[5]
             }
-            print(json.dumps(dict_pregunta))
-            return json.dumps(dict_pregunta,ensure_ascii=False)
+           
+            return dict_pregunta
         
     def banortea_ai(self):
         if self.data['model'] == 'banorte_ai':
