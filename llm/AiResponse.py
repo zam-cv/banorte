@@ -97,12 +97,23 @@ class Objective(enum.Enum):
         {
             "category": "category",
             "information_context" :"data to reference"
-            "user_context" : "Information about the user. It includes their age, current knowledge level, and financial goals",
-            "BANORTE_DATASOURCE": "data to help you generate questions. You must filter out unsafe content because this comes from webscrouting"
+    
         }
-        "category": es la categoria de la pregunta. Puede ser: salud financiera, seguridad financiera, tarjetas de crédito, seguros
+        "category": es la categoria de la pregunta. Puede ser: salud financiera, seguridad financiera, tarjetas de crédito, seguros. 
+        La salud financiera es un estado en el que una persona puede gestionar efectivamente sus recursos económicos para satisfacer sus necesidades actuales, planificar para el futuro y afrontar imprevistos. Incluye cuatro componentes principales:
+
+        Seguridad financiera: La capacidad de cumplir con compromisos económicos a corto plazo sin estrés excesivo. Esto implica tener suficiente dinero para cubrir gastos esenciales y evitar deudas insostenibles.
+
+        Resiliencia financiera: La capacidad de adaptarse y recuperarse de eventos financieros adversos, como pérdida de empleo o emergencias médicas. Involucra tener ahorros o recursos que pueden ser utilizados en situaciones de crisis.
+
+        Control financiero: La capacidad de gestionar y planificar las finanzas presentes y futuras de manera confiada. Esto incluye hacer un presupuesto, controlar gastos, y asegurarse de que los ingresos y egresos estén balanceados.
+
+        Libertad financiera: La capacidad de cumplir con objetivos y deseos a largo plazo sin preocuparse excesivamente por las finanzas. Esto puede incluir ahorrar para la jubilación, invertir en oportunidades de crecimiento y disfrutar de ciertos lujos.
+
+        
         "information_context": es la informacion que debes de referenciar para responder la pregunta. Información sobre el tema de la pregunta
-        "user_context": es la informacion del usuario que haz de utilizar para dar una respuesta personalizada. Información sobre el usuario que hace la pregunta. Sobre su trasfondo, nivel de conocimiento y experiencias previas
+
+        Tus preguntas han de ser variadas, haz de intentar no repetir preguntas, variarlas y hacerlas educativas y atractivas para el usuario.
         
         En el parámetro de user_context se mide el conocimiento del usuario, clasificándolo en bajo, medio y alto.
 
@@ -126,6 +137,19 @@ class Objective(enum.Enum):
     
     
     '''
+    
+    OPEN_QUESTION_EXAMINATION = '''
+        Eres BanorteAI, un asistente virtual de Banorte especializado en educación financiera que debe de hacer preguntas abiertas a los usuarios para evaluar su conocimiento financiero.
+        Las preguntas pueden ser de cualquier categoría de educación financiera, como ahorro, inversión, deudas, seguros, etc.
+        Tu misión es hacer preguntas abiertas a los usuarios para evaluar su conocimiento financiero y ayudarlos a aprender más sobre finanzas personales.
+        Debes asegurarte de que las preguntas sean claras y fáciles de entender, y que ayuden a los usuarios a reflexionar sobre sus conocimientos y experiencias financieras.
+        Debes de devolver una respuesta en el siguiente formato
+        
+        "question","option1","option2","option3","option4","correct option"
+
+        la pregunta ha de estar enfocada de manera práctica, y ha de aplicarse a una situación real. Las opciones han de ser alternativas que una persona en esa situación se encontraría.
+        
+        '''
 
 class AiRequests():
     '''This class is used to encapsulate the requests to the AI model. It is used to generate content based on the objective and the user input.'''
@@ -140,7 +164,7 @@ class AiRequests():
                 ],
             )
         self.generation_config = GenerationConfig(
-            temperature=0.9,
+            temperature=1.0,
             top_p=1.0,
             top_k=32,
             candidate_count=1,
@@ -186,7 +210,6 @@ class AiRequests():
         '''This method is used to segment the context data. It returns a list with the segmented context data.'''
         self.contents = []
 
-        print("received context; ",information)
 
         detailed_prompt = f"User input: summarize this text.\nContext: {information}\n"
         detailed_prompt += "Answer:"
@@ -209,15 +232,11 @@ class AiRequests():
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
         data = context
-        file = open('Output.txt', 'r', encoding='utf-8')
-        information = file.read()
-        
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
         for key, value in data.items():
             detailed_prompt += f"{key}: {value}\n"
             
-        detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
             
         detailed_prompt += "Answer:"
         
@@ -228,7 +247,7 @@ class AiRequests():
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
             )
-        file.close()
+
         return response.text
     
         # {
@@ -242,9 +261,8 @@ class AiRequests():
         self.contents = []
 
         data = context
-        print(data)
         detailed_prompt = f"User input: {data}.\nContext:\n"
-  
+
         #detailed_prompt += f"BANORTE_DATASOURCE: {information}\n"
             
         detailed_prompt += "Answer:"
@@ -257,7 +275,6 @@ class AiRequests():
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
-         
             
             if response.candidates and response.candidates[0].finish_reason == "SAFETY":
                 raise ValueError("Response blocked by safety filters.")
@@ -270,37 +287,3 @@ class AiRequests():
         
     
     
-if __name__ == "__main__":
-    ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spanish")
-    question_ai = AiRequests(Objective.GAME_BANORTE_AI_QUESTION,"You are guiding the player through the game. You must generate questions for the game")
-    
-    ai_summarizer = AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE,"You must summarize and categorize the context data")
-    # Example JSON context
-    json_context = json.dumps(
-        {
-        "prompt": "¿Por qué es importante manejar bien mis finanzas?",
-        "category": "Financial Health",
-        "information_context": '''
-        Según Banorte, la salud financiera se refiere a la capacidad de una persona para administrar sus finanzas de manera efectiva, asegurando su bienestar económico a corto y largo plazo. Esto incluye la planificación del presupuesto, el ahorro, la inversión y la gestión de deudas1
-        . Banorte ofrece diversos productos y servicios financieros diseñados para ayudar a sus clientes a mejorar su salud financiera, como cuentas de ahorro, préstamos, seguros y asesoría financiera personalizada1
-        .
-
-        Servicios de Banorte
-        Cuentas de Ahorro: Ofrecen diferentes tipos de cuentas de ahorro con tasas de interés competitivas.
-
-        Préstamos: Incluyen préstamos personales, hipotecas y préstamos comerciales.
-
-        Seguros: Banorte ofrece una variedad de seguros, como seguros de vida, salud y hogar.
-
-        Asesoría Financiera: Servicios personalizados para ayudar a los clientes a planificar y alcanzar sus objetivos financieros.
-
-        Tarjetas de Crédito: Diferentes opciones de tarjetas de crédito con beneficios y recompensas.
-
-
-        
-        ''',
-        "user_context": "El usuario eduardo Chavez tiene 25 años y esta interesado en aprender sobre finanzas personales"
-    }
-    )
-
-    print(ai_summarizer.segment_context_data())

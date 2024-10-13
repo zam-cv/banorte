@@ -9,7 +9,7 @@ import json
 from fastapi.responses import JSONResponse
 from achivos_proc import archivo_procesado
 from vectorial_db import VectorialDB
-
+import random
 
 app = FastAPI()
 
@@ -59,6 +59,20 @@ def create_question(question: Question):
     result = llm_fast_api.generate_questions()
     return JSONResponse(content=result)
 
+@app.get("/model/selection/questions/situation")
+def create_situation():
+    temp_dict = {"model":"banorte_ai_question","category":"Situación"}
+    
+    categorias = ['Salud Financiera','Resiliencia Financiera','Educación Financiera','Situación','Inversiones','Ahorro','Crédito','Seguros','Banca Digital','Banca Móvil','Banca en Línea','Banca Personal','Banca Empresarial','Banca Corporativa','Banca de Inversión','Banca Privada','Banca Patrimonial']
+    valor = random.choice(categorias)
+    
+    value = VectorialDB("BanorteDataBase",f'Dame información para realizar una pregunta sobre la categoría {valor}')
+    value.client.connect()
+    temp_dict["information_context"] = value.query_collection(f'Dame información para realizar una pregunta sobre la categoría {valor}. La información me ha de permitir plantear una situación')
+    llm_fast_api = FastApiLLMReceiver(temp_dict)
+    result = llm_fast_api.generate_questions()
+    return JSONResponse(content=result)
+
 
 @app.post("/model/selection/publish/web_scraping")
 def set_web_scraping(general_format: GeneralFormat):
@@ -72,31 +86,34 @@ def set_web_scraping(general_format: GeneralFormat):
 @app.post("/model/selection/")
 def create_item(general_format: GeneralFormat):
     # Convert general_format to JSON-compatible format
-    general_format_json = jsonable_encoder(general_format)
-    
-    llm_fast_api = FastApiLLMReceiver(general_format_json)
-    if general_format.model == 'banorte_ai':
-        value = VectorialDB("BanorteAI999999", llm_fast_api.banortea_ai())
+    temp_dict = dict(jsonable_encoder(general_format))
+    print(temp_dict)
+    print("---------------")
+    llm_fast_api = FastApiLLMReceiver(temp_dict)
+    if temp_dict['model'] == 'banorte_ai':
+        values = temp_dict["values"]
+        value = VectorialDB("BanorteDataBase",f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]}')
         value.client.connect()
+        temp_dict["values"]["information_context"] += value.query_collection(f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]} con la información de la categoría {values["information_context"]} y de usuario {values["user_context"]} ')
+        value.client.connect()
+        llm_fast_api = FastApiLLMReceiver(temp_dict)
         result = llm_fast_api.banortea_ai()
             
-    elif general_format.model == 'game_banorte_ai':
-        value = VectorialDB("GameBanorteAI",general_format.values)
+    elif temp_dict['model'] == 'game_banorte_ai':
+        values = temp_dict["values"]
+        value = VectorialDB("BanorteDataBase",f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]}')
         value.client.connect()
-        if value.collection_exists("GameBanorteAI"):
-            value = VectorialDB("GameBanorteAI",general_format.values)
-            result = {"response":value.query_collection("GameBanorteAI",general_format.values.prompt)}
-        else:
-            result = llm_fast_api.game_banorte_ai()
+        temp_dict["values"]["information_context"] += value.query_collection(f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]} con la información de la categoría {values["information_context"]} y de usuario {values["user_context"]} ')
+        value.client.connect()
+        result = llm_fast_api.game_banorte_ai()
             
-    elif general_format.model == 'sample':
-        value = VectorialDB("Sample",general_format.values)
+    elif temp_dict['model'] == 'sample':
+        values = temp_dict["values"]
+        value = VectorialDB("BanorteDataBase",f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]}')
         value.client.connect()
-        if value.collection_exists("Sample"):
-            value = VectorialDB("Sample",general_format.values)
-            result = {"response":value.query_collection("Sample",general_format.values.prompt)}
-        else:
-            result = llm_fast_api.dummy()
+        temp_dict["values"]["information_context"] += value.query_collection(f'Responde mi pregunta {values["prompt"]} para la categoría {values["category"]} con la información de la categoría {values["information_context"]} y de usuario {values["user_context"]} ')
+        value.client.connect()
+        result = llm_fast_api.dummy()
     else:
         raise HTTPException(status_code=400, detail="Invalid model")
     

@@ -16,7 +16,7 @@
 - [Flutter](https://docs.flutter.dev/get-started/install)
 - [Vertex](https://cloud.google.com/vertex-ai?hl=es-419)
 
-### Desarrollo
+### ¿Cómo correr nuestro proyecto?
 
 1. Clona el repositorio
 
@@ -91,3 +91,7 @@ docker run -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:
 cd app
 flutter run
 ```
+
+## Diagrama de componentes
+
+![Componentes](Components.png)

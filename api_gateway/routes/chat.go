@@ -34,25 +34,17 @@ type LLMRequest struct {
 	Values interface{} `json:"values"`
 }
 
+type Result struct {
+	Response string `json:"response"`
+}
+
 func addChatRoutes(rg *gin.RouterGroup) {
 	group := rg.Group("/chat")
 	llmUrl := "http://" + config.LLMHost + ":" + config.LLMPort
 
-	group.POST("/message", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
-		var req Message
-		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(400, gin.H{"error": err.Error()})
-			return
-		}
-
-		llmReq := LLMRequest{
-			Model: "banorte_ai",
-			Values: map[string]string{
-				"prompt":              req.Prompt,
-				"category":            "chat",
-				"information_context": "Eres un usuario de Banorte",
-				"user_context":        "Eres un usuario de Banorte",
-			},
+	group.GET("/message/:category", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
+		llmReq := map[string]string{
+			"category": ctx.Param("category"),
 		}
 
 		jsonData, err := json.Marshal(llmReq)
@@ -61,7 +53,7 @@ func addChatRoutes(rg *gin.RouterGroup) {
 			return
 		}
 
-		resp, err := http.Post(llmUrl+"/model/selection/", "application/json", bytes.NewBuffer(jsonData))
+		resp, err := http.Post(llmUrl+"/model/selection/questions", "application/json", bytes.NewBuffer(jsonData))
 		if err != nil {
 			ctx.JSON(500, gin.H{"error": "Error making request to external service"})
 			return
@@ -80,33 +72,29 @@ func addChatRoutes(rg *gin.RouterGroup) {
 			return
 		}
 
-		var response struct {
-			Response string `json:"response"`
-		}
+		var response ChatResponse
 		if err := json.Unmarshal(body, &response); err != nil {
 			ctx.JSON(500, gin.H{"error": "Error processing response from external service"})
 			return
 		}
 
-		ctx.String(200, response.Response)
+		ctx.JSON(200, response)
 	})
 
-	group.POST("/practice", middlewares.AuthMiddleware(), handlePracticeLearn("game_banorte_ai_question", llmUrl))
-	group.POST("/learn", middlewares.AuthMiddleware(), handlePracticeLearn("game_banorte_ai", llmUrl))
-}
-
-func handlePracticeLearn(model string, llmUrl string) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		var req PracticeLearnRequest
+	group.POST("/learn", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
+		var req MessageRequest
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
 
-		llmReq := LLMRequest{
-			Model: model,
-			Values: map[string]string{
-				"category": req.Category,
+		llmReq := map[string]interface{}{
+			"model": "banorte_ai",
+			"values": map[string]string{
+				"prompt":              req.Prompt,
+				"category":            "Salud financiera",
+				"information_context": "La salud financiera es ",
+				"user_context":        "Eduardo chavez tiene 25 años y uan hipoteca",
 			},
 		}
 
@@ -115,14 +103,11 @@ func handlePracticeLearn(model string, llmUrl string) gin.HandlerFunc {
 			ctx.JSON(500, gin.H{"error": "Error preparing the request"})
 			return
 		}
-
-		resp, err := http.Post(llmUrl+"/model/selection/", "application/json", bytes.NewBuffer(jsonData))
+		resp, err := http.Post(llmUrl+"/model/selection", "application/json", bytes.NewBuffer(jsonData))
 		if err != nil {
 			ctx.JSON(500, gin.H{"error": "Error making request to external service"})
 			return
 		}
-		defer resp.Body.Close()
-
 		if resp.StatusCode != http.StatusOK {
 			body, _ := ioutil.ReadAll(resp.Body)
 			ctx.JSON(resp.StatusCode, gin.H{"error": string(body)})
@@ -135,12 +120,65 @@ func handlePracticeLearn(model string, llmUrl string) gin.HandlerFunc {
 			return
 		}
 
-		var chatResponse ChatResponse
-		if err := json.Unmarshal(body, &chatResponse); err != nil {
+		var response Result
+		if err := json.Unmarshal(body, &response); err != nil {
 			ctx.JSON(500, gin.H{"error": "Error processing response from external service"})
 			return
 		}
 
-		ctx.JSON(200, chatResponse)
-	}
+		ctx.JSON(200, response)
+	})
+
+	// group.POST("/practice", middlewares.AuthMiddleware(), handlePracticeLearn("game_banorte_ai_question", llmUrl))
+	// group.POST("/learn", middlewares.AuthMiddleware(), handlePracticeLearn("game_banorte_ai", llmUrl))
 }
+
+// func handlePracticeLearn(model string, llmUrl string) gin.HandlerFunc {
+// 	return func(ctx *gin.Context) {
+// 		var req PracticeLearnRequest
+// 		if err := ctx.ShouldBindJSON(&req); err != nil {
+// 			ctx.JSON(400, gin.H{"error": err.Error()})
+// 			return
+// 		}
+
+// 		llmReq := LLMRequest{
+// 			Model: model,
+// 			Values: map[string]string{
+// 				"category": req.Category,
+// 			},
+// 		}
+
+// 		jsonData, err := json.Marshal(llmReq)
+// 		if err != nil {
+// 			ctx.JSON(500, gin.H{"error": "Error preparing the request"})
+// 			return
+// 		}
+
+// 		resp, err := http.Post(llmUrl+"/model/selection/", "application/json", bytes.NewBuffer(jsonData))
+// 		if err != nil {
+// 			ctx.JSON(500, gin.H{"error": "Error making request to external service"})
+// 			return
+// 		}
+// 		defer resp.Body.Close()
+
+// 		if resp.StatusCode != http.StatusOK {
+// 			body, _ := ioutil.ReadAll(resp.Body)
+// 			ctx.JSON(resp.StatusCode, gin.H{"error": string(body)})
+// 			return
+// 		}
+
+// 		body, err := ioutil.ReadAll(resp.Body)
+// 		if err != nil {
+// 			ctx.JSON(500, gin.H{"error": "Error reading response from external service"})
+// 			return
+// 		}
+
+// 		var chatResponse ChatResponse
+// 		if err := json.Unmarshal(body, &chatResponse); err != nil {
+// 			ctx.JSON(500, gin.H{"error": "Error processing response from external service"})
+// 			return
+// 		}
+
+// 		ctx.JSON(200, chatResponse)
+// 	}
+// }

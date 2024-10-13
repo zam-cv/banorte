@@ -1,3 +1,4 @@
+#Dependencias para leer documentos
 import PyPDF2
 from docx import Document
 from pptx import Presentation
@@ -10,8 +11,9 @@ from fastapi import FastAPI, File, UploadFile
 import uvicorn
 
 app = FastAPI()
-
+#Función para procesar un archivo. El archivo recibido puede ser un archivo de texto, pdf, docx, pptx o una imagen. Llega como documento binario.
 def archivo_procesado(archivo_binario: bytes) -> str:
+    #Función para identificar el tipo de archivo que se recibe
     def identificar_tipo_archivo(archivo_binario):
         if archivo_binario.startswith(b'%PDF'):
             return 'pdf'
@@ -24,12 +26,12 @@ def archivo_procesado(archivo_binario: bytes) -> str:
             return 'image'
         else:
             return 'txt'
-
+    #Configuración de la ruta de tesseract para el OCR
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
     tipo_archivo = identificar_tipo_archivo(archivo_binario)
     print(tipo_archivo)
-
+    #Regex que identifica espacios en blanco que no deberían de estar, asi como saltos de línea y tabuladores
     regex = re.compile(r'\t|\n|\r|  ')
     texto = []
 

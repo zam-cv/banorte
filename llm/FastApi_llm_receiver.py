@@ -1,16 +1,6 @@
 from llm.AiResponse import AiRequests, Objective
 import json
 
-		# llmReq := LLMRequest{
-		# 	Model: "banorte_ai",
-		# 	Values: map[string]string{
-		# 		"prompt":              req.Prompt,
-		# 		"category":            "chat",
-		# 		"information_context": "Eres un usuario de Banorte",
-		# 		"user_context":        "Eres un usuario de Banorte",
-		# 	},
-		# }
-
 class FastApiLLMReceiver():
     def __init__(self, data : json):
         self.data = data
@@ -21,13 +11,15 @@ class FastApiLLMReceiver():
         if objective == "sample":
             self.model = AiRequests(Objective.DUMMY, "You must generate dummy data for testing. Do it in spanish")
         elif objective == "game_banorte_ai":
-            self.model =  AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.  Do it in spanish")
+            self.model =  AiRequests(Objective.GAME_BANORTE_AI, "Debes de dar consejos financieros y responder preguntas del usuario, debes ayudarlos a mejorar su nivel de conocimiento. Se respetuoso y no proporciones información falsa/no verificada.  Do it in spanish")
         elif objective == "game_banorte_ai_question":
-            self.model =  AiRequests(Objective.GAME_BANORTE_AI_QUESTION, "Genera una pregunta para el juego, siguiendo el formato pregunta,opción1,opción2,opción3,opción4,respuesta correcta. No añadas Pregunta,opción1,opción2,opción3,opción4,respuesta correcta al inicio de la pregunta.  Do it in spanish")
+            self.model =  AiRequests(Objective.GAME_BANORTE_AI_QUESTION, "Genera una pregunta para el juego, siguiendo el formato pregunta,opción1,opción2,opción3,opción4,respuesta correcta. SIEMPTE GENERA 6 VALORES. No añadas Pregunta,opción1,opción2,opción3,opción4,respuesta correcta al inicio de la pregunta.  Do it in spanish")
         elif objective == "summary":
-            self.model =  AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE, "You must summarize and categorize the data.  Do it in spanish")
+            self.model =  AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE, "Tu trabajo es resumir contenido y sintetizarlo, enfocándote en los puntos más importantes. ")
         elif objective == 'banorte_ai':
-            self.model =  AiRequests(Objective.BANORTE_ASSISTANT, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.  Do it in spanish")
+            self.model =  AiRequests(Objective.BANORTE_ASSISTANT, "Debes de dar asesoría financiera. Debes de responder preguntas de manera personalizada, siempre adaptandote al concepto. No des información falsa.")
+        elif objective == 'banorte_ai_question':
+            self.model = AiRequests(Objective.OPEN_QUESTION_EXAMINATION, "Genera una pregunta para el juego, que se trata de una situación práctica en el que el usario deba de responder. Todas las opciones deben de estar aplicadas a la situación. Debes de darle 4 opciones.  Debes de seguir el formato pregunta,opción1,opción2,opción3,opción4,respuesta correcta. SIEMPTE GENERA 6 VALORES 1. La pregunta. 1-4 Opciones, 3 la respuesta correcta. No añadas Pregunta,opción1,opción2,opción3,opción4,respuesta correcta al inicio de la pregunta.  Do it in spanish")
         else:
             self.model = None
             
@@ -41,12 +33,36 @@ class FastApiLLMReceiver():
     def generate_questions(self)->dict:
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+            
+            while(len(pregunta)<5):
+                pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+                if len(pregunta) < 5:
+                    continue
+<<<<<<< HEAD
+=======
+                else: 
+                    break
+            dict_pregunta = {
+                "question": pregunta[0],
+                "options": pregunta[1:5],
+                "correct_answer": pregunta[5]
+            }
+        elif self.data['model'] == 'banorte_ai_question':
+            pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+            while(len(pregunta)<5):
+                pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
+                if len(pregunta) < 5:
+                    continue
+>>>>>>> 522782b61eee058af4e1032cc54095479594e09a
+                else:
+                    break
             dict_pregunta = {
                 "question": pregunta[0],
                 "options": pregunta[1:5],
                 "correct_answer": pregunta[5]
             }
            
+            print(pregunta)
             return dict_pregunta
         
     def banortea_ai(self)->dict:
