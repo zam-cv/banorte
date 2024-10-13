@@ -39,9 +39,7 @@ class _PracticePageState extends State<PracticePage> {
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity, // Ocupa todo el ancho
-            color: Theme.of(context)
-                .colorScheme
-                .secondary, // Fondo azul para el logo
+            color: Theme.of(context).colorScheme.secondary,
             padding: const EdgeInsets.symmetric(
                 vertical: 10), // Espaciado vertical para el logo
             child: Column(
@@ -60,7 +58,7 @@ class _PracticePageState extends State<PracticePage> {
                 Text(
                   'Practica',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -70,8 +68,7 @@ class _PracticePageState extends State<PracticePage> {
 
           // Fijo: Barra de progreso con el tache personalizado en la parte inferior negra
           Container(
-            color: const Color(
-                0xFF00020C), // Fondo negro para la barra de progreso
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
               children: [
@@ -112,7 +109,7 @@ class _PracticePageState extends State<PracticePage> {
                   Text(
                     'Pregunta',
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -137,7 +134,7 @@ class _PracticePageState extends State<PracticePage> {
                   Text(
                     'Opciones',
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),

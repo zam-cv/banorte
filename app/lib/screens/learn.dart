@@ -39,9 +39,7 @@ class _LearnPageState extends State<LearnPage> {
           // Fijo: AppBar customizado con el logo en la parte superior azul
           Container(
             width: double.infinity,
-            color: Theme.of(context)
-                .colorScheme
-                .secondary, // Fondo azul para el logo
+            color: Theme.of(context).colorScheme.secondary,
             padding: const EdgeInsets.symmetric(
               vertical: 10,
             ), // Espaciado vertical para el logo
