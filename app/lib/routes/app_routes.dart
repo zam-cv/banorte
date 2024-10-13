@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Importa la pantalla learn
+// Importa las pantallas
 import 'package:app/screens/learn.dart';
-
-// Auth
 import 'package:app/screens/login.dart';
 import 'package:app/screens/signup.dart';
 import 'package:app/screens/forgot_password.dart';
@@ -11,6 +9,7 @@ import 'package:app/screens/home.dart';
 import 'package:app/screens/practice.dart';
 import 'package:app/screens/news.dart';
 import 'package:app/screens/profile.dart';
+import 'package:app/screens/splash_screen.dart'; // Importa la pantalla de splash
 
 class BaseLayout extends StatelessWidget {
   final Widget child;
@@ -20,11 +19,11 @@ class BaseLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 25.0,
+            top: 0,
           ),
           child: child,
         ),
@@ -41,8 +40,9 @@ MaterialPageRoute<dynamic> page(RouteSettings settings, Widget child) {
 }
 
 class AppRoutes {
-  // Auth
-  static const String login = '/';
+  // Rutas de la app
+  static const String splash = '/splash';
+  static const String login = '/login';
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
   static const String home = '/home';
@@ -52,6 +52,7 @@ class AppRoutes {
   static const String profile = '/profile';
 
   static final Map<String, Widget> routes = {
+    splash: const SplashScreen(), // SplashScreen como ruta predeterminada
     login: const Login(),
     signup: const Signup(),
     forgotPassword: const ForgotPassword(),
@@ -69,7 +70,7 @@ class AppRoutes {
       return page(settings, builder);
     }
 
-    // default route
-    return page(settings, const Login());
+    // default route será el SplashScreen
+    return page(settings, const SplashScreen());
   }
 }

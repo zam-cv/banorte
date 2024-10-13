@@ -1,19 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:app/routes/app_routes.dart';
-//import 'package:window_manager/window_manager.dart';
-
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await windowManager.ensureInitialized();
-
-//   windowManager.waitUntilReadyToShow().then((_) async {
-//     await windowManager.setTitleBarStyle(TitleBarStyle.hidden,
-//         windowButtonVisibility: true);
-//     await windowManager.show();
-//   });
-
-//   runApp(const MyApp());
-// }
 
 void main() {
   runApp(const MyApp());
@@ -27,26 +13,38 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Banorte AI',
       theme: ThemeData(
-        fontFamily: 'NotoSans',
+        fontFamily: 'Roboto', // Fuente por defecto de la app
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+              fontFamily: 'Gotham', fontWeight: FontWeight.w900, fontSize: 30),
+          displayMedium: TextStyle(
+              fontFamily: 'Gotham', fontWeight: FontWeight.w700, fontSize: 25),
+          bodyLarge: TextStyle(
+              fontFamily: 'Roboto', fontWeight: FontWeight.w400, fontSize: 17),
+          bodyMedium: TextStyle(
+              fontFamily: 'Roboto', fontWeight: FontWeight.w300, fontSize: 12),
+          labelLarge: TextStyle(
+              fontFamily: 'Gotham', fontWeight: FontWeight.w700, fontSize: 15),
+        ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.grey,
           brightness: Brightness.dark,
-          primary: const Color(0xffec1c2d),
+          primary: const Color(0xffeb0029),
           onPrimary: Colors.black,
-          secondary: Colors.grey,
+          secondary: Colors.white,
           onSecondary: Colors.white,
           primaryContainer: const Color(0xff070d2a),
           onPrimaryContainer: const Color.fromARGB(255, 224, 224, 224),
           secondaryContainer: const Color.fromARGB(255, 17, 31, 85),
           onSecondaryContainer: const Color.fromARGB(255, 105, 105, 105),
-          surface: Colors.grey,
+          surface: Color.fromARGB(255, 216, 215, 215),
           error: Colors.red,
           onError: Colors.white,
         ),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.splash,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
