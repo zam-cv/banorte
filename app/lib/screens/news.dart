@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../widgets/custom_nav.dart'; // Asegúrate de importar el CustomNavBar existente
+import '../widgets/custom_nav.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({Key? key}) : super(key: key);
@@ -10,12 +10,25 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  int _selectedIndex = 1; // Noticias está seleccionada
+  int _selectedIndex = 1;
+  bool _showSplash = true; //Splash screen
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Iniciar el temporizador de la splash screen
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _showSplash =
+            false; // Mostrar el contenido principal después de 2 segundos
+      });
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      // Aquí puedes añadir lógica de navegación si es necesario
     });
   }
 
@@ -23,58 +36,98 @@ class _NewsPageState extends State<NewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface, // Fondo claro
-      body: Column(
-        children: [
-          // Fijo: AppBar customizado con el logo en la parte superior azul
-          Container(
-            width: double.infinity,
-            color: Theme.of(context)
-                .colorScheme
-                .secondary, // Fondo azul para el logo
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(
-                  'assets/logo.svg', // Logo en SVG
-                  height: 30,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context)
-                        .colorScheme
-                        .primary, // Logo con el color principal del tema
-                    BlendMode.srcIn,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Noticias', // Título de la página
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        // Aplicar el tema para títulos grandes
-                      ),
-                ),
-              ],
-            ),
-          ),
-          // Lista desplazable de noticias
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: List.generate(
-                    10,
-                    (index) =>
-                        buildNewsPost(context)), // Repite la noticia 10 veces
-              ),
-            ),
-          ),
-        ],
-      ),
-      // Utiliza la navbar existente desde el archivo importado
+      body: _showSplash
+          ? _buildSplashScreen(
+              context) // Muestra la splash screen si es necesario
+          : _buildMainContent(context), // Muestra el contenido principal
       bottomNavigationBar: CustomNavBar(
         onTabSelected: _onItemTapped, // Función para manejar las selecciones
         selectedIndex: _selectedIndex, // Noticias está seleccionada
       ),
+    );
+  }
+
+  // Splash Screen con el icono `news_icon.svg`
+  Widget _buildSplashScreen(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.secondary,
+      width: double.infinity, // Asegura que el ancho ocupe toda la pantalla
+      height: double.infinity, // Asegura que el alto ocupe toda la pantalla
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/news_icon.svg', // Ruta del icono de noticias en SVG
+              height: 50, // Ajusta el tamaño del icono
+              fit: BoxFit.contain, // Asegura que la imagen no se distorsione
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Noticias',
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 40),
+            CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Contenido principal después de la splash screen
+  Widget _buildMainContent(BuildContext context) {
+    return Column(
+      children: [
+        // Fijo: AppBar customizado con el logo en la parte superior azul
+        Container(
+          width: double.infinity,
+          color: Theme.of(context)
+              .colorScheme
+              .secondary, // Fondo azul para el logo
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                'assets/logo.svg', // Logo en SVG
+                height: 30,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context)
+                      .colorScheme
+                      .primary, // Logo con el color principal del tema
+                  BlendMode.srcIn,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                'Noticias', // Título de la página
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      // Aplicar el tema para títulos grandes
+                    ),
+              ),
+            ],
+          ),
+        ),
+        // Lista desplazable de noticias
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: List.generate(
+                  10,
+                  (index) =>
+                      buildNewsPost(context)), // Repite la noticia 10 veces
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -95,8 +148,7 @@ class _NewsPageState extends State<NewsPage> {
             Text(
               'Apoyo de Banorte móvil',
               style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: Colors
-                        .white, // Aplicar el estilo de títulos grandes (Gotham)
+                    color: Colors.white, // Aplicar el estilo de títulos grandes
                   ),
             ),
             const SizedBox(height: 10),
@@ -104,7 +156,7 @@ class _NewsPageState extends State<NewsPage> {
             Text(
               'Los clientes de la banca móvil de Grupo Financiero Banorte ahora pueden realizar pagos a cualquier parte del mundo y en diversas monedas, como dólar americano, euro, libra esterlina, franco suizo, dólar canadiense, dólar australiano, corona noruega y corona sueca.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white, // Aplicar el estilo de cuerpo (Roboto)
+                    color: Colors.white, // Aplicar el estilo de cuerpo
                   ),
             ),
             const SizedBox(height: 20),
