@@ -15,14 +15,36 @@ class CustomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       backgroundColor: const Color(0xFF070D2A), // Fondo oscuro
       currentIndex: selectedIndex,
-      onTap: onTabSelected,
-      selectedItemColor:
-          const Color(0xFFEC1C2D), // Color para ícono seleccionado
-      unselectedItemColor: Colors.white, // Color para íconos no seleccionados
+      onTap: (int index) {
+        onTabSelected(index);
+
+        // Navegación según el ícono seleccionado
+        switch (index) {
+          case 0:
+            Navigator.pushNamed(context, '/home');
+            break;
+          case 1:
+            // Ruta a noticias
+            break;
+          case 2:
+            Navigator.pushNamed(
+                context, '/learn'); // Navegar a la pantalla Learn
+            break;
+          case 3:
+            Navigator.pushNamed(
+                context, '/practice'); // Navegar a la pantalla Practice
+            break;
+          case 4:
+            // Ruta para configuraciones
+            break;
+        }
+      },
+      selectedItemColor: const Color(0xFFEC1C2D),
+      unselectedItemColor: Colors.white,
       items: [
         BottomNavigationBarItem(
           icon: Transform.translate(
-            offset: Offset(0, 8), // Baja el ícono 6 píxeles
+            offset: Offset(0, 8),
             child: Image.asset(
               'assets/home_icon.png',
               width: 36,
@@ -33,7 +55,7 @@ class CustomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Transform.translate(
-            offset: Offset(0, 8), // Baja el ícono 6 píxeles
+            offset: Offset(0, 8),
             child: Image.asset(
               'assets/news_icon.png',
               width: 36,
@@ -44,7 +66,7 @@ class CustomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Transform.translate(
-            offset: Offset(0, 8), // Baja el ícono 6 píxeles
+            offset: Offset(0, 8),
             child: Image.asset(
               'assets/learn_icon.png',
               width: 36,
@@ -55,7 +77,7 @@ class CustomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Transform.translate(
-            offset: Offset(0, 8), // Baja el ícono 6 píxeles
+            offset: Offset(0, 8),
             child: Image.asset(
               'assets/practice_icon.png',
               width: 36,
@@ -66,7 +88,7 @@ class CustomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Transform.translate(
-            offset: Offset(0, 8), // Baja el ícono 6 píxeles
+            offset: Offset(0, 8),
             child: Image.asset(
               'assets/settings_icon.png',
               width: 36,

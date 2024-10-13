@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+// Importa la pantalla learn
+import 'package:app/screens/learn.dart';
+
 // Auth
 import 'package:app/screens/login.dart';
 import 'package:app/screens/signup.dart';
 import 'package:app/screens/forgot_password.dart';
 import 'package:app/screens/home.dart';
+import 'package:app/screens/practice.dart';
 
 class BaseLayout extends StatelessWidget {
   final Widget child;
@@ -19,9 +23,6 @@ class BaseLayout extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(
             top: 25.0,
-            // left: 16.0,
-            // right: 16.0,
-            // bottom: 16.0,
           ),
           child: child,
         ),
@@ -43,12 +44,16 @@ class AppRoutes {
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
   static const String home = '/home';
+  static const String learn = '/learn';
+  static const String practice = '/practice';
 
   static final Map<String, Widget> routes = {
     login: const Login(),
     signup: const Signup(),
     forgotPassword: const ForgotPassword(),
     home: const Home(),
+    learn: const LearnPage(),
+    practice: const PracticePage(),
   };
 
   static Route<dynamic> generateRoute(RouteSettings settings) {

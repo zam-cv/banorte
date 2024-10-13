@@ -66,6 +66,7 @@ flutter:
     - assets/learn_icon.png
     - assets/practice_icon.png
     - assets/settings_icon.png
+    - assets/cross.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
