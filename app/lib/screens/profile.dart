@@ -51,7 +51,9 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(
             'Mi perfil', // Título de la página
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: Colors.white, // Aplicar el tema para títulos grandes
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary, // Cambiado a primary
                 ),
           ),
           // Contenido del perfil
@@ -86,19 +88,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 10),
                   // Nombre y correo electrónico
-                  const Text(
+                  Text(
                     'Carlos Rust',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary, // Cambiado a primary
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 5),
-                  const Text(
+                  Text(
                     'carlos_rust@gmail.com',
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .tertiary, // Cambiado a tertiary
                       fontSize: 16,
                     ),
                   ),
