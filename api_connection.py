@@ -51,7 +51,6 @@ def create_question(question: Question):
     
     temp_dict = dict(jsonable_encoder(question))
     temp_dict["model"] = "game_banorte_ai_question"
-    print(temp_dict)
     information_context = VectorialDB("BanorteDataBase",f'Dame información de la categoría {temp_dict["category"]}')
     information_context.client.connect()
     temp_dict["information_context"] = information_context.query_collection(f'Dame información de la categoría {temp_dict["category"]}')
