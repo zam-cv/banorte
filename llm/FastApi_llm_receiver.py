@@ -26,7 +26,7 @@ class FastApiLLMReceiver():
             
     def summarize(self):
         if self.data['model'] == 'summary':
-            return self.model.segment_context_data()
+            return self.model.segment_context_data(self.data['values']['prompt'])
         
     def generate_questions(self):
         if self.data['model'] == 'game_banorte_ai_question':

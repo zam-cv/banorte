@@ -157,35 +157,8 @@ class AiRequests():
         }
         self.contents = []
         
-    def make_prompt(self,prompt : str)->str:
-        '''This method is used to generate content based on the user input. It returns the response from the AI model.'''
-        prompt :str = f"""
-                User input: {prompt}.
-                Answer:
-                """
-        self.contents.append(prompt)
-        response = self.model.generate_content(
-            self.contents,
-            generation_config=self.generation_config,
-            safety_settings=self.safety_settings,
-            )
-        return response.text
     
-    def make_prompt_with_context(self,prompt:str,context:str)->str:
-        '''This method is used to generate content based on the user input and the context. It returns the response from the AI model.'''
-        prompt :str = f"""
-                User input: {prompt}.
-                Answer:
-                """
-        self.contents.append(context)
-        self.contents.append(prompt)
-        response = self.model.generate_content(
-            self.contents,
-            generation_config=self.generation_config,
-            safety_settings=self.safety_settings,
-            )
-        return response.text 
-    
+
     def make_prompt_with_from_json(self, context)->str:
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         data = context
@@ -206,31 +179,17 @@ class AiRequests():
             )
         return response.text 
 
-    def get_context_data(self)->str:
-        '''This method is used to get the context data from the Output.txt file. It returns the context data.'''
-        try:
-            #with open('Output.txt', 'r', encoding='utf-8') as file:
-            #    print(file.read())
-            #    context = str(file.read())
-            #    return context
-            return "Hola mundo"
-        except FileNotFoundError:
-            return "Context data not found."
-        except UnicodeDecodeError:
-            return "Error decoding the context data."
         
     def set_context_data(self,context:str)->None:
         '''This method is used to set the context data to the Output.txt file.'''
         with open('Output.txt', 'w', encoding='utf-8') as file:
             file.write(context)
             
-    def segment_context_data(self)->list:
+    def segment_context_data(self,information)->list:
         '''This method is used to segment the context data. It returns a list with the segmented context data.'''
         self.contents = []
-        file = open('Output.txt', 'r', encoding='utf-8')
-        information = file.read()
-        print("---------------------------")
-        print(information)
+
+        print("received context; ",information)
 
         detailed_prompt = f"User input: summarize this text.\nContext: {information}\n"
         detailed_prompt += "Answer:"
@@ -245,7 +204,7 @@ class AiRequests():
         
         if response:
             self.set_context_data(response.text)
-        file.close()
+
         return response.text
         
 
@@ -253,7 +212,9 @@ class AiRequests():
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
         data = context
-        information = self.get_context_data()
+        file = open('Output.txt', 'r', encoding='utf-8')
+        information = file.read()
+        
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
         for key, value in data.items():
@@ -270,6 +231,7 @@ class AiRequests():
             generation_config=self.generation_config,
             safety_settings=self.safety_settings,
             )
+        file.close()
         return response.text
     
         # {
@@ -281,8 +243,9 @@ class AiRequests():
     def generate_questions_with_json(self, context) -> str:
         '''This method is used to generate questions based on the user input and the context given on the json. It returns the response from the AI model.'''
         self.contents = []
+        file = open('Output.txt', 'r', encoding='utf-8')
         data = context
-        information = self.get_context_data()
+        information = file.read()
         detailed_prompt = f"User input: {data['prompt']}.\nContext:\n"
         
         for key, value in data.items():
@@ -300,6 +263,7 @@ class AiRequests():
                 generation_config=self.generation_config,
                 safety_settings=self.safety_settings,
             )
+            file.close()
             
             if response.candidates and response.candidates[0].finish_reason == "SAFETY":
                 raise ValueError("Response blocked by safety filters.")
