@@ -53,13 +53,33 @@ cd llm\
 Si estas en Windows corre el siguiente comando.
 
 ```bash
-install_dependencies.bat
+llm/install_dependencies.bat
 ```
 
 Si estas en Mac o Linux corre el siguiente comando.
 
 ```bash
-install_dependencies.bat
+llm/install_dependencies.sh
+```
+6. Descargar y autenticarte con google SDK
+
+7. Correr los servidores en el siguiente órden.
+
+```bash
+ollama run gemma2:9b
+```
+
+```bash
+python3 api_connection.py
+```
+
+```bash
+cd api_gateway
+go run main.go
+```
+
+```bash
+docker run -p 8080:8080 -p 50051:50051 cr.weaviate.io/semitechnologies/weaviate:1.24.8
 ```
 
 2. Create a `.env` file in the `api_gateway` directory with the following content
