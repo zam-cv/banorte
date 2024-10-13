@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:math';
 import '../widgets/custom_nav.dart';
 
 class NewsPage extends StatefulWidget {
@@ -11,7 +12,7 @@ class NewsPage extends StatefulWidget {
 
 class _NewsPageState extends State<NewsPage> {
   int _selectedIndex = 1;
-  bool _showSplash = true; //Splash screen
+  bool _showSplash = true; // Splash screen
 
   @override
   void initState() {
@@ -131,8 +132,19 @@ class _NewsPageState extends State<NewsPage> {
     );
   }
 
-  // Widget de una noticia individual
+  // Widget de una noticia individual con imagen aleatoria
   Widget buildNewsPost(BuildContext context) {
+    // Lista de imágenes de noticias
+    final List<String> imagePaths = [
+      'assets/noticia_muestra.png',
+      'assets/noticia_muestra2.png',
+      'assets/noticia_muestra3.png',
+      'assets/noticia_muestra4.png',
+    ];
+
+    // Selección aleatoria de la imagen
+    final String randomImage = imagePaths[Random().nextInt(imagePaths.length)];
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Container(
@@ -154,17 +166,17 @@ class _NewsPageState extends State<NewsPage> {
             const SizedBox(height: 10),
             // Contenido del texto
             Text(
-              'Los clientes de la banca móvil de Grupo Financiero Banorte ahora pueden realizar pagos a cualquier parte del mundo y en diversas monedas, como dólar americano, euro, libra esterlina, franco suizo, dólar canadiense, dólar australiano, corona noruega y corona sueca.',
+              'Los clientes de la banca móvil de Grupo Financiero Banorte ahora pueden realizar pagos a cualquier parte del mundo y en diversas monedas...',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.white, // Aplicar el estilo de cuerpo
                   ),
             ),
             const SizedBox(height: 20),
-            // Imagen de la noticia
+            // Imagen aleatoria de la noticia
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.asset(
-                'assets/noticia_muestra.png', // Ruta de la imagen
+                randomImage, // Imagen seleccionada aleatoriamente
                 fit: BoxFit.cover,
               ),
             ),
