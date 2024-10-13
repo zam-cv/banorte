@@ -5,12 +5,12 @@ import 'package:app/widgets/button.dart';
 import 'package:app/routes/app_routes.dart';
 import 'package:app/widgets/custom_button.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:app/storage.dart'; // Importamos la clase Storage
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ProfilePageState createState() => _ProfilePageState();
 }
 
@@ -20,7 +20,6 @@ class _ProfilePageState extends State<SettingsPage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      // Navegación a otras páginas si es necesario
     });
   }
 
@@ -43,6 +42,15 @@ class _ProfilePageState extends State<SettingsPage> {
         ),
       );
     }
+  }
+
+  Future<void> _logout() async {
+    // Eliminar el token del almacenamiento seguro
+    await Storage.delete('token');
+
+    // Redirigir al login después de eliminar el token
+    Navigator.pushNamedAndRemoveUntil(
+        context, AppRoutes.login, (route) => false);
   }
 
   @override
@@ -196,9 +204,8 @@ class _ProfilePageState extends State<SettingsPage> {
                         horizontal: 25, vertical: 20),
                     child: CustomButton(
                       text: 'Cerrar Sesión',
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.login);
-                      },
+                      onPressed:
+                          _logout, // Llamamos al método para cerrar sesión
                       // Aplica el estilo en el child del botón
                       child: Text(
                         'Cerrar Sesión',

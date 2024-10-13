@@ -1,19 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:app/routes/app_routes.dart';
+import 'package:app/storage.dart';
+import 'package:app/config.dart';
+import 'package:app/services/auth_service.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Leer el token almacenado al iniciar la app
+  String? token = await Storage.read('token');
+  Config.token = token; // Guardamos el token en la configuración global
+
+  print("Token leído desde el almacenamiento: $token");
+
+  // Verificar si el token es válido
+  bool isValidToken = false;
+  if (Config.token != null) {
+    print("Verificando token...");
+    isValidToken = await AuthService.verifyToken();
+    print("¿Es el token válido?: $isValidToken");
+  }
+
+  // Inicializar la app
+  runApp(MyApp(isValidToken: isValidToken));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isValidToken;
+
+  const MyApp({super.key, required this.isValidToken});
 
   @override
   Widget build(BuildContext context) {
+    print("Token es válido al iniciar la app: $isValidToken");
+
     return MaterialApp(
       title: 'Banorte AI',
       theme: ThemeData(
-        fontFamily: 'Roboto', // Fuente por defecto de la app
+        fontFamily: 'Roboto',
         textTheme: const TextTheme(
           displayLarge: TextStyle(
               fontFamily: 'Gotham', fontWeight: FontWeight.w900, fontSize: 30),
@@ -45,7 +69,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.splash,
+      // Usamos la variable isValidToken para definir la ruta inicial
+      initialRoute: isValidToken ? AppRoutes.home : AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

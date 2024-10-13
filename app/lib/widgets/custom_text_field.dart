@@ -30,9 +30,19 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       onChanged: onChanged,
-      style: const TextStyle(fontSize: 14),
+      style: TextStyle(
+        fontSize: 14,
+        color:
+            Theme.of(context).colorScheme.secondary, // Texto en color secondary
+      ),
       decoration: InputDecoration(
         hintText: hintText,
+        hintStyle: TextStyle(
+          color: Theme.of(context)
+              .colorScheme
+              .secondary
+              .withOpacity(0.7), // Hint text en secondary
+        ),
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(14)),
         ),

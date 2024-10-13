@@ -3,7 +3,23 @@ import 'package:flutter/services.dart'; // Import necesario para los inputFormat
 import 'package:app/widgets/custom_num_field.dart'; // Asumo que este widget está basado en el TextField
 
 class DateOfBirthFields extends StatelessWidget {
-  const DateOfBirthFields({super.key});
+  // Controladores para día, mes y año
+  final TextEditingController dayController;
+  final TextEditingController monthController;
+  final TextEditingController yearController;
+
+  // Constructor que acepta los controladores
+  const DateOfBirthFields({
+    super.key,
+    required this.dayController,
+    required this.monthController,
+    required this.yearController,
+  });
+
+  // Método que combina los campos en una fecha completa
+  String getDateOfBirth() {
+    return '${dayController.text}/${monthController.text}/${yearController.text}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +40,9 @@ class DateOfBirthFields extends StatelessWidget {
             // Campo para día (2 dígitos)
             Expanded(
               child: CustomNumField(
+                controller: dayController, // Añadimos el controlador
                 hintText: 'dd',
+
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(2), // Limita a 2 dígitos
@@ -35,6 +53,7 @@ class DateOfBirthFields extends StatelessWidget {
             // Campo para mes (2 dígitos)
             Expanded(
               child: CustomNumField(
+                controller: monthController, // Añadimos el controlador
                 hintText: 'mm',
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -46,6 +65,7 @@ class DateOfBirthFields extends StatelessWidget {
             // Campo para año (4 dígitos)
             Expanded(
               child: CustomNumField(
+                controller: yearController, // Añadimos el controlador
                 hintText: 'aaaa',
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,

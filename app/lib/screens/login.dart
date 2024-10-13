@@ -8,6 +8,7 @@ import 'package:app/widgets/custom_input.dart';
 import 'package:app/widgets/custom_input_password.dart';
 import 'package:app/config.dart';
 import 'package:app/services/auth_service.dart';
+import 'package:app/storage.dart'; // Importa la clase Storage
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -19,11 +20,9 @@ class Login extends StatefulWidget {
 class LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _loading = false; // Indicador de carga
+  bool _loading = false;
 
   Future<void> _login() async {
-    final currentContext = context; // Guardar el contexto antes del await
-
     setState(() {
       _loading = true;
     });
@@ -43,20 +42,14 @@ class LoginState extends State<Login> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         Config.token = data['token'];
+        print('Token recibido del backend: ${Config.token}');
 
-        // Verificar la sesión con el token recibido
-        final verifyResponse = await AuthService.verifySession();
+        // Almacena el token de forma segura
+        await Storage.write('token', Config.token!);
+        print('Token guardado en el almacenamiento');
 
-        if (verifyResponse.statusCode == 200) {
-          // Sesión verificada correctamente
-          print("Sesión verificada correctamente.");
-          // Redirigir a la pantalla principal
-          Navigator.pushNamed(currentContext, AppRoutes.home);
-        } else {
-          // Error al verificar la sesión
-          print("Error al verificar la sesión: ${verifyResponse.body}");
-          _showErrorDialog("Error al verificar la sesión.");
-        }
+        // Navegación directa a la pantalla Home, limpiando la pila de navegación.
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
       } else {
         _showErrorDialog("Login failed. Please check your credentials.");
       }
@@ -77,17 +70,13 @@ class LoginState extends State<Login> {
           title: Text(
             'Error',
             style: TextStyle(
-              color: Theme.of(context)
-                  .colorScheme
-                  .tertiary, // Color terciario para el título
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
           content: Text(
             message,
             style: TextStyle(
-              color: Theme.of(context)
-                  .colorScheme
-                  .tertiary, // Color terciario para el contenido
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ),
           actions: [
@@ -152,14 +141,13 @@ class LoginState extends State<Login> {
                       ),
                       const SizedBox(height: 10),
                       CustomInput(
-                        controller: _emailController, // Controlador del email
+                        controller: _emailController,
                         label: "Correo electronico",
                         hintText: "a51726553@gmail.com",
                       ),
                       const SizedBox(height: 15),
                       CustomInputPassword(
-                        controller:
-                            _passwordController, // Controlador del password
+                        controller: _passwordController,
                         label: "Contraseña",
                         hintText: "**********",
                       ),
@@ -223,7 +211,7 @@ class LoginState extends State<Login> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: CustomButton(
                       text: 'Iniciar sesión',
-                      onPressed: _login, // Llamar a la función de login
+                      onPressed: _login,
                       child: _loading
                           ? const CircularProgressIndicator(
                               color: Colors.white,

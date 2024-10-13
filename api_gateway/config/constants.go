@@ -12,6 +12,9 @@ var (
 	SecretKey       string
 	FirestoreClient *firestore.Client
 	JwtSecret       = []byte("")
+
+	LLMHost string
+	LLMPort string
 )
 
 func LoadEnvVars() {
@@ -21,5 +24,7 @@ func LoadEnvVars() {
 
 	Port = os.Getenv("PORT")
 	SecretKey = os.Getenv("SECRET_KEY")
+	LLMHost = os.Getenv("LLM_HOST")
+	LLMPort = os.Getenv("LLM_PORT")
 	JwtSecret = []byte(SecretKey)
 }
