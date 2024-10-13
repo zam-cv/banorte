@@ -7,6 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from llm.FastApi_llm_receiver import FastApiLLMReceiver
 import json
 from fastapi.responses import JSONResponse
+from achivos_proc import archivo_procesado
 app = FastAPI()
 
 # Define a Pydantic model for request body
@@ -65,7 +66,6 @@ def delete_item(item_id: int):
 @app.post("/archivo/")
 async def upload_file(file: UploadFile = File(...)):
     contents = await file.read()
-    # Process the file contents here
     processed_content = archivo_procesado(contents)
     return {"content": processed_content}
 
