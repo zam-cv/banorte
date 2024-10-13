@@ -37,7 +37,7 @@ class FastApiLLMReceiver():
         '''Generate questions for the game'''
         if self.data['model'] == 'game_banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
-            
+
             while(len(pregunta)<5):
                 pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
                 if len(pregunta) < 5:
@@ -49,6 +49,7 @@ class FastApiLLMReceiver():
                 "options": pregunta[1:5],
                 "correct_answer": pregunta[5]
             }
+
         elif self.data['model'] == 'banorte_ai_question':
             pregunta = self.model.generate_questions_with_json(self.data['information_context']).strip().split(",")
             while(len(pregunta)<5):
@@ -64,7 +65,7 @@ class FastApiLLMReceiver():
             }
            
             print(pregunta)
-            return dict_pregunta
+        return dict_pregunta
         
     def banortea_ai(self)->dict:
         '''Generate the response for the user'''

@@ -53,18 +53,20 @@ def get_web_scraping():
 
 
 @app.post("/model/selection/questions")
-
 def create_question(question: Question):
     '''Create a question based on the category'''
     
     temp_dict = dict(jsonable_encoder(question))
     temp_dict["model"] = "game_banorte_ai_question"
     information_context = VectorialDB("BanorteDataBase",f'Dame información de la categoría {temp_dict["category"]}')
+
     information_context.client.connect()
+
     temp_dict["information_context"] = information_context.query_collection(f'Dame información de la categoría {temp_dict["category"]}')
     information_context.client.connect()
     llm_fast_api = FastApiLLMReceiver(temp_dict)
     result = llm_fast_api.generate_questions()
+ 
     return JSONResponse(content=result)
 
 @app.get("/model/selection/questions/situation")
@@ -98,8 +100,6 @@ def create_item(general_format: GeneralFormat):
     '''Set the model and values for the request'''
     # Convert general_format to JSON-compatible format
     temp_dict = dict(jsonable_encoder(general_format))
-    print(temp_dict)
-    print("---------------")
     llm_fast_api = FastApiLLMReceiver(temp_dict)
     if temp_dict['model'] == 'banorte_ai':
         values = temp_dict["values"]
