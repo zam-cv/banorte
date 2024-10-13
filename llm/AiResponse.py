@@ -120,11 +120,14 @@ class Objective(enum.Enum):
     '''
     
     CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE = '''
+
     
         You are a text summarizer and categorizer AI.
         Your objective is to summarize and categorize the context data that you receive.
         You'l receive a huge file with web scraping data about Banorte, you must analyze this data, summarize it and categorize it.
         When you categorize it, you must still explain in depth the concepts, as this will be used to generate content for the BanorteAI.
+        You must remove any mention to publicitary content, and focus on the educational content.
+        Any content not related to economy, banorte, financial education or related topics must be removed.
     
     
     '''

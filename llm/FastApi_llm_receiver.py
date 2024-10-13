@@ -12,15 +12,15 @@ class FastApiLLMReceiver():
     def set_model(self):
         objective = self.data['model']
         if objective == "sample":
-            self.model = AiRequests(Objective.DUMMY, "You must generate dummy data for testing")
+            self.model = AiRequests(Objective.DUMMY, "You must generate dummy data for testing. Do it in spanish")
         elif objective == "game_banorte_ai":
-            self.model =  AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.")
+            self.model =  AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.  Do it in spanish")
         elif objective == "game_banorte_ai_question":
-            self.model =  AiRequests(Objective.GAME_BANORTE_AI_QUESTION, "You are guiding the player through the game. You must generate questions for the game")
+            self.model =  AiRequests(Objective.GAME_BANORTE_AI_QUESTION, "You are guiding the player through the game. You must generate questions for the game.  Do it in spanish")
         elif objective == "summary":
-            self.model =  AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE, "You must summarize and categorize the data")
+            self.model =  AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE, "You must summarize and categorize the data.  Do it in spanish")
         elif objective == 'banorte_ai':
-            self.model =  AiRequests(Objective.BANORTE_ASSISTANT, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.")
+            self.model =  AiRequests(Objective.BANORTE_ASSISTANT, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.  Do it in spanish")
         else:
             self.model = None
             
