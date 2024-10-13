@@ -21,7 +21,7 @@ def get_weaviate_client():
     )
 
 # Lista de documentos para añadir a la colección
-documents = [open("Output.txt", "r").read()]
+documents = ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
 
 
 
