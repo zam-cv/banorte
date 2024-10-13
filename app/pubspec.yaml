@@ -80,6 +80,12 @@ flutter:
     - assets/settings_icon.png
     - assets/cross.png
     - assets/noticia_muestra.png
+    - assets/noticia_muestra2.png
+    - assets/noticia_muestra3.png
+    - assets/noticia_muestra4.png
+    - assets/noticia_muestra5.png
+    - assets/noticia_muestra6.png
+    - assets/noticia_muestra7.png
     - assets/fire.svg
     - assets/user.svg
   #   - images/a_dot_ham.jpeg
