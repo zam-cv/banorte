@@ -68,11 +68,13 @@ install_dependencies.sh
   ollama run gemma2:9b
   ```
   ```
-  python3 api_connection.py`
+  python3 api_connection.py
   ```
   ```
+  cd api_gateway
   go run main.go
   ```
+  
 
 
 
