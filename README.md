@@ -42,6 +42,26 @@ flutter pub get
 flutter run
 ```
 
+4. Abra otra terminal en el directorio raiz del proyecto y acceder a `llm`
+
+```bash
+cd llm\
+```
+
+5. Corra los archivos de instalacion de dependencias. 
+
+Si estas en Windows corre el siguiente comando.
+
+```bash
+install_dependencies.bat
+```
+
+Si estas en Mac o Linux corre el siguiente comando.
+
+```bash
+install_dependencies.bat
+```
+
 2. Create a `.env` file in the `api_gateway` directory with the following content
 
 ```bash
