@@ -1,0 +1,18 @@
+[
+  "https://www.google.com/url?q=https://www.banorte.com/wps/portal/gfb/Home/noticias-banorte/noticias-banorte-2024&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAkQAg&usg=AOvVaw3L9IeFaBLEaGE5sN3Q18a3",
+  "https://www.google.com/url?q=https://www.elimparcial.com/dinero/2024/10/11/banorte-estima-que-mexico-crecera-13-en-2024/&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAD&usg=AOvVaw1-86UCnnRS_tZjz0fRCaF1",
+  "https://www.google.com/url?q=https://www.reforma.com/preve-banorte-recorte-de-0-9-al-gasto-en-2025/ar2888645&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAH&usg=AOvVaw2LH-O0nGrtZuRIagib_kNe",
+  "https://www.google.com/url?q=https://www.elpais.cr/2024/10/11/mexico-enfrenta-panorama-complejo-por-desaceleracion-manufacturera-en-ee-uu-segun-banorte/&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAP&usg=AOvVaw0uOo1el7BipsbVkbkWu_uG",
+  "https://www.google.com/url?q=https://www.milenio.com/negocios/banorte-preve-crecimiento-1-3-2024-inicio-sexenio-coyuntura&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAT&usg=AOvVaw23ma9LaKE8ByKD6gnP-8nG",
+  "https://www.google.com/url?q=https://www.tusbuenasnoticias.com/noticias/economia/2024/10/11/37908-precio-del-dolar-hoy-viernes-11-de-octubre-bancoppel-azteca-banorte-e-inbursa&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAX&usg=AOvVaw07IceynbhGCOYSe3iNcziR",
+  "https://www.google.com/url?q=https://elceo.com/economia/paquete-economico-2025-banorte-anticipa-un-recorte-en-el-gasto-publico-y-menor-crecimiento/&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAb&usg=AOvVaw1L4U5TO3thDY_bZIq-QyP_",
+  "https://www.google.com/url?q=https://vanguardia.com.mx/dinero/proyecta-banorte-crecimiento-de-13-para-mexico-en-2024-CE13603634&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQ0PADegQIBBAf&usg=AOvVaw04X-pKGk1CvvI_7G028EpX",
+  "https://www.google.com/url?q=https://www.banorte.com/wps/portal/ixe-xima/Home/be-trading/analisis-y-noticias/analisis&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAcQAg&usg=AOvVaw0HaGjKRkUsFd2jPz0_H22G",
+  "https://www.google.com/url?q=https://www.eleconomista.com.mx/tags/grupo-financiero-banorte-1811&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAoQAg&usg=AOvVaw1b9zdsaBDuwiXkp3Wu5A-J",
+  "https://www.google.com/url?q=https://www.milenio.com/temas/banorte&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAYQAg&usg=AOvVaw32J9MEu0EvEqYWyO4u2FSI",
+  "https://www.google.com/url?q=https://www.bloomberglinea.com/tags/banorte/&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAAQAg&usg=AOvVaw2I9fPS8BXYsWnNUZ3mKocu",
+  "https://www.google.com/url?q=https://www.milenio.com/temas/grupo-financiero-banorte&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAgQAg&usg=AOvVaw2PL97MLsh70nnOxCxIQOpK",
+  "https://www.google.com/url?q=https://investors.banorte.com/es/sustainability/resources/esg-news-and-gallery&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAEQAg&usg=AOvVaw1iqR2w3yU0v3LMJUHPOTGi",
+  "https://www.google.com/url?q=https://mx.investing.com/equities/financiero-banorte-news&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAIQAg&usg=AOvVaw2Z0bQm4ytvH54kGr5wzYUu",
+  "https://www.google.com/url?q=https://investors.banorte.com/es/news-and-events/press-releases/2024&sa=U&ved=2ahUKEwjy6d3Qp4qJAxWIsFYBHVSOCMEQFnoECAsQAg&usg=AOvVaw3eMsZDGTdwpFgqfM45dm5S"
+]
