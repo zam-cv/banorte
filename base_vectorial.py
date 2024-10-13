@@ -22,17 +22,18 @@ def get_weaviate_client():
 
 # Lista de documentos para añadir a la colección
 file = open("Output.txt", "r")
-documents = [file.read()]
+documents = ["My name is Iker Fuentes and my id is A01749675"]
 file.close()
 ollama_client = ollama.Client(
-    follow_redirects=True,
-
-    headers={"User-Agent":"ollama-python","Content-Type":"application/json","Accept":"application/json"},
-    timeout = None
-    
+    #follow_redirects=True,
+    headers={
+        "User-Agent": "ollama-python",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    },
+    timeout=None
 )
 ollama_client.base_url = "http://172.31.98.243:11434"
-
 
 
 collection_name = "Docs"
@@ -78,12 +79,12 @@ def add_documents_to_collection(collection, documents):
 
 
 
-def query_collection(collection, prompt):
+def query_collection(self, prompt):
     """
     Genera un embedding para el prompt y recupera el documento más relevante de la colección.
     """
     response = ollama_client.embeddings(model="gemma2:9b", prompt=prompt)
-    results = collection.query.near_vector(near_vector=response["embedding"], limit=1)
+    results = self.collection.query.near_vector(near_vector=response["embedding"], limit=1)
     
     # Verificar si la consulta devuelve resultados
     if not results.objects:

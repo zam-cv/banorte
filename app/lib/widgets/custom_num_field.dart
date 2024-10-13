@@ -54,7 +54,7 @@ class CustomNumField extends StatelessWidget {
         ),
         contentPadding: contentPadding,
         filled: true,
-        fillColor: Theme.of(context).colorScheme.secondaryContainer,
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
         suffixIcon: suffixIcon,
       ),
     );

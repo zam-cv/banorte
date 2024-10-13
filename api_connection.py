@@ -8,7 +8,12 @@ from llm.FastApi_llm_receiver import FastApiLLMReceiver
 import json
 from fastapi.responses import JSONResponse
 from achivos_proc import archivo_procesado
+from vectorial_db import VectorialDB
+
+
 app = FastAPI()
+
+
 
 # Define a Pydantic model for request body
 class Item(BaseModel):
@@ -21,15 +26,49 @@ class GeneralFormat(BaseModel):
     model: str
     values: Item
 
-# Root endpoint
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to FastAPI!"}
+class Question(BaseModel):
+    category: str
+    information_context: str
+    user_context: str
 
-# Read item by ID
-@app.get("/model/selection/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+
+
+@app.get("/model/selection/data")
+def get_web_scraping():
+    llm_fast_api = FastApiLLMReceiver({"model":"summary","values":{"prompt":"web scraping"}})
+    value = VectorialDB("Banorte",'')
+    if value.collection_exists("Banorte",value.get_weaviate_client()):
+        value = VectorialDB("Banorte","web scraping")
+        result = {"response":value.query_collection("Banorte","web scraping")}
+    else:
+        result = llm_fast_api.summarize()
+    return JSONResponse(content=result)
+    
+
+
+@app.post("/model/selection/questions")
+def create_question(question: Question):
+    llm_fast_api = FastApiLLMReceiver(question)
+    value = VectorialDB("Questions",'---')
+    if value.collection_exists("Questions",value.get_weaviate_client()):
+        value = VectorialDB("Questions",question.values)
+        result = {"response":value.query_collection("Questions",question.values.prompt)}
+    else:
+        result = llm_fast_api.generate_questions()
+    return JSONResponse(content=result)
+
+
+@app.post("/model/selection/publish/web_scraping")
+def set_web_scraping(general_format: GeneralFormat):
+    general_format_json = jsonable_encoder(general_format)
+    llm_fast_api = FastApiLLMReceiver(general_format_json)
+    if general_format.model == 'summary':
+        value = VectorialDB("Banorte",[general_format.values.prompt])
+        if value.collection_exists("Banorte",value.get_weaviate_client()):
+            result = {"response":value.query_collection(general_format.values.prompt)}
+        else:
+            result = llm_fast_api.summarize()
+    return JSONResponse(content=result)
 
 # Create a new item
 @app.post("/model/selection/")
@@ -38,16 +77,30 @@ def create_item(general_format: GeneralFormat):
     general_format_json = jsonable_encoder(general_format)
     
     llm_fast_api = FastApiLLMReceiver(general_format_json)
-    if general_format.model == 'summary':
-        result = llm_fast_api.summarize()
-    elif general_format.model == 'game_banorte_ai_question':
-        result = llm_fast_api.generate_questions()
-    elif general_format.model == 'banorte_ai':
-        result = llm_fast_api.banortea_ai()
+    if general_format.model == 'banorte_ai':
+        value = VectorialDB("BanorteAI",'---')
+        if value.collection_exists("BanorteAI",value.get_weaviate_client()):
+            value = VectorialDB("BanorteAI",general_format.values)
+            result = {"response":value.query_collection("BanorteAI",general_format.values.prompt)}
+            
+        else:
+            result = llm_fast_api.banortea_ai()
+            
     elif general_format.model == 'game_banorte_ai':
-        result = llm_fast_api.game_banorte_ai()
+        value = VectorialDB("GameBanorteAI",'---')
+        if value.collection_exists("GameBanorteAI",value.get_weaviate_client()):
+            value = VectorialDB("GameBanorteAI",general_format.values)
+            result = {"response":value.query_collection("GameBanorteAI",general_format.values.prompt)}
+        else:
+            result = llm_fast_api.game_banorte_ai()
+            
     elif general_format.model == 'sample':
-        result = llm_fast_api.dummy()
+        value = VectorialDB("Sample",'---')
+        if value.collection_exists("Sample",value.get_weaviate_client()):
+            value = VectorialDB("Sample",general_format.values)
+            result = {"response":value.query_collection("Sample",general_format.values.prompt)}
+        else:
+            result = llm_fast_api.dummy()
     else:
         raise HTTPException(status_code=400, detail="Invalid model")
     

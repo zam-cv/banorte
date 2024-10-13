@@ -95,13 +95,11 @@ class Objective(enum.Enum):
         
         Recibirás un JSON con la siguiente estructura:
         {
-            "prompt": "user input",
             "category": "category",
             "information_context" :"data to reference"
             "user_context" : "Information about the user. It includes their age, current knowledge level, and financial goals",
             "BANORTE_DATASOURCE": "data to help you generate questions. You must filter out unsafe content because this comes from webscrouting"
         }
-        "prompt": puede ser cualquier pregunta de educación financiera, dudas sobre tarjetas de crédito, seguros, etc.
         "category": es la categoria de la pregunta. Puede ser: salud financiera, seguridad financiera, tarjetas de crédito, seguros
         "information_context": es la informacion que debes de referenciar para responder la pregunta. Información sobre el tema de la pregunta
         "user_context": es la informacion del usuario que haz de utilizar para dar una respuesta personalizada. Información sobre el usuario que hace la pregunta. Sobre su trasfondo, nivel de conocimiento y experiencias previas

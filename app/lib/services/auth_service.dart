@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:app/config.dart';
+import 'package:app/storage.dart';
 
 class AuthService {
   // Método para hacer peticiones POST al backend
@@ -23,22 +24,27 @@ class AuthService {
     return response;
   }
 
-  // Método para hacer una solicitud GET para verificar el inicio de sesión
-  static Future<http.Response> verifySession() async {
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-    };
+  // Método para verificar si el token es válido
+  static Future<bool> verifyToken() async {
+    Map<String, String> headers = {};
 
-    // Añadir el token de autorización
     if (Config.token != null) {
       headers['Authorization'] = 'Bearer ${Config.token}';
     }
 
     final response = await http.get(
-      Uri.parse('${Config.baseUrl}/api/auth/verify'),
+      Uri.parse(
+          '${Config.baseUrl}/api/auth/verify'), // Ruta para verificar el token
       headers: headers,
     );
 
-    return response;
+    if (response.statusCode == 200) {
+      return true; // Token válido
+    } else {
+      // El token no es válido, lo eliminamos
+      await Storage.delete('token');
+      Config.token = null;
+      return false; // Token inválido
+    }
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:app/routes/app_routes.dart';
+import 'package:app/storage.dart';
+import 'package:app/config.dart';
+import 'package:app/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -17,24 +21,41 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Inicializamos el AnimationController
+    // Inicializamos el AnimationController para la animación de opacidad
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
 
-    // Definimos la animación de opacidad
+    // Definimos la animación de opacidad (fade-in)
     _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
 
-    // Ejecutamos la animación de fade-in
+    // Ejecutar la animación
     _controller.forward();
 
-    // Después de 3 segundos, navegamos al login
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/login');
-    });
+    // Verificamos el token antes de decidir hacia dónde navegar
+    _checkTokenAndNavigate();
+  }
+
+  Future<void> _checkTokenAndNavigate() async {
+    // Leer el token desde el almacenamiento seguro
+    String? token = await Storage.read('token');
+    Config.token = token; // Guardamos el token en la configuración global
+
+    bool isValidToken = false;
+    if (Config.token != null) {
+      // Verificar si el token es válido
+      isValidToken = await AuthService.verifyToken();
+    }
+
+    // Después de verificar, navega a la ruta correspondiente
+    if (isValidToken) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    }
   }
 
   @override
