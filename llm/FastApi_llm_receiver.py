@@ -1,16 +1,6 @@
 from llm.AiResponse import AiRequests, Objective
 import json
 
-		# llmReq := LLMRequest{
-		# 	Model: "banorte_ai",
-		# 	Values: map[string]string{
-		# 		"prompt":              req.Prompt,
-		# 		"category":            "chat",
-		# 		"information_context": "Eres un usuario de Banorte",
-		# 		"user_context":        "Eres un usuario de Banorte",
-		# 	},
-		# }
-
 class FastApiLLMReceiver():
     def __init__(self, data : json):
         self.data = data

@@ -34,6 +34,10 @@ type LLMRequest struct {
 	Values interface{} `json:"values"`
 }
 
+type Result struct {
+	Response string `json:"response"`
+}
+
 func addChatRoutes(rg *gin.RouterGroup) {
 	group := rg.Group("/chat")
 	llmUrl := "http://" + config.LLMHost + ":" + config.LLMPort
@@ -87,10 +91,10 @@ func addChatRoutes(rg *gin.RouterGroup) {
 		llmReq := map[string]interface{}{
 			"model": "banorte_ai",
 			"values": map[string]string{
-				"category":            "learn",
 				"prompt":              req.Prompt,
-				"user_context":        "Eres un usua",
-				"information_context": "learn",
+				"category":            "Salud financiera",
+				"information_context": "La salud financiera es ",
+				"user_context":        "Eduardo chavez tiene 25 años y uan hipoteca",
 			},
 		}
 
@@ -104,15 +108,25 @@ func addChatRoutes(rg *gin.RouterGroup) {
 			ctx.JSON(500, gin.H{"error": "Error making request to external service"})
 			return
 		}
-		defer resp.Body.Close()
-
 		if resp.StatusCode != http.StatusOK {
 			body, _ := ioutil.ReadAll(resp.Body)
 			ctx.JSON(resp.StatusCode, gin.H{"error": string(body)})
 			return
 		}
 
-		ctx.JSON(200, resp.Body)
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			ctx.JSON(500, gin.H{"error": "Error reading response from external service"})
+			return
+		}
+
+		var response Result
+		if err := json.Unmarshal(body, &response); err != nil {
+			ctx.JSON(500, gin.H{"error": "Error processing response from external service"})
+			return
+		}
+
+		ctx.JSON(200, response)
 	})
 
 	// group.POST("/practice", middlewares.AuthMiddleware(), handlePracticeLearn("game_banorte_ai_question", llmUrl))
