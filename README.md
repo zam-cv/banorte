@@ -59,8 +59,13 @@ install_dependencies.bat
 Si estas en Mac o Linux corre el siguiente comando.
 
 ```bash
-install_dependencies.bat
+install_dependencies.sh
 ```
+6. Corra los archivos de instalacion de dependencias. 
+
+
+
+
 
 2. Create a `.env` file in the `api_gateway` directory with the following content
 
