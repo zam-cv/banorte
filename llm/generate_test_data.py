@@ -6,14 +6,12 @@ categories = ['prompt', 'category', 'information_context', 'user_context']
 def generate_dummy():
     ai = AiRequests(Objective.DUMMY, "You must generate dummy data for testing")
     result = ai.make_prompt('''Make json data for testing folowing the format: 
-                         
-                                 {
-            "prompt": "user input",
-            "category": "category",
-            "information_context" :"data to reference"
-            "user_context" : "Information about the user"
-        }
-        Separate each json with a | character
+                    {"prompt": "user input",
+                    "category": "category",
+                    "information_context" :"data to reference"
+                    "user_context" : "Information about the user"}
+
+                Separate each json with a | character
                          
                          ''').split("|")
     return result
@@ -32,7 +30,7 @@ def validate_json(json_string):
         return None
 
 if __name__ == "__main__":
-    ai = AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice")
+    ai = AiRequests(Objective.GAME_BANORTE_AI, "You must give financial advice, and help the user to improve their financial knowledge. Be respectful and do not provide false/unverified information.")
     for val in generate_dummy():
         print("----------")
         valid_data = validate_json(val)
