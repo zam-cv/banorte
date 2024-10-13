@@ -23,7 +23,6 @@ class _PracticePageState extends State<PracticePage> {
 
   void _checkAnswer() {
     // Lógica para comprobar la respuesta aquí
-    // Por ejemplo, incrementar el progreso:
     if (_progress < 10) {
       setState(() {
         _progress++;
@@ -35,40 +34,40 @@ class _PracticePageState extends State<PracticePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF00020C), // Fondo oscuro
-      appBar: PreferredSize(
-        preferredSize:
-            const Size.fromHeight(70), // Aumenta la altura del AppBar
-        child: AppBar(
-          backgroundColor: const Color(0xFF070D2A), // Color oscuro del AppBar
-          centerTitle: true,
-          title: Column(
-            mainAxisSize: MainAxisSize.min, // Ajusta el tamaño al contenido
-            children: [
-              SvgPicture.asset(
-                'assets/logo.svg', // Logo en SVG
-                height: 30,
-              ),
-              const SizedBox(height: 5), // Espaciado entre el logo y el texto
-              const Text(
-                'Practica', // Texto debajo del logo
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+      body: Column(
+        children: [
+          // Fijo: AppBar customizado con el logo en la parte superior azul
+          Container(
+            width: double.infinity, // Ocupa todo el ancho
+            color: const Color(0xFF070D2A), // Fondo azul para el logo
+            padding: const EdgeInsets.symmetric(
+                vertical: 10), // Espaciado vertical para el logo
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Ajusta el tamaño al contenido
+              children: [
+                SvgPicture.asset(
+                  'assets/logo.svg', // Logo en SVG
+                  height: 30,
                 ),
-              ),
-            ],
+                const SizedBox(height: 5), // Espaciado entre el logo y el texto
+                const Text(
+                  'Practica', // Texto debajo del logo
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
-          automaticallyImplyLeading: false, // Elimina el leading por defecto
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Barra de progreso con el tache personalizado
-            Row(
+
+          // Fijo: Barra de progreso con el tache personalizado en la parte inferior negra
+          Container(
+            color: const Color(
+                0xFF00020C), // Fondo negro para la barra de progreso
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Row(
               children: [
                 GestureDetector(
                   onTap: () {
@@ -94,111 +93,112 @@ class _PracticePageState extends State<PracticePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+          ),
 
-            // Contenido que será scrollable
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Pregunta
-                    const Text(
-                      'Pregunta',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
+          // Desplazable: Contenido restante (preguntas, opciones, botón)
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Pregunta
+                  const Text(
+                    'Pregunta',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: const Color(
-                            0x84131B44), // Color con 52% de opacidad
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        'Acabas de recibir un depósito de 15,000 pesos por concepto de tu salario. Sabes que tienes que destinar el 10% de tu salario al ahorro y, además, debes pagar un ISR del 20%. ¿Cuánto dinero te queda después de cumplir con ambas obligaciones?',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color:
+                          const Color(0x84131B44), // Color con 52% de opacidad
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    const SizedBox(height: 20),
+                    child: const Text(
+                      'Acabas de recibir un depósito de 15,000 pesos por concepto de tu salario. Sabes que tienes que destinar el 10% de tu salario al ahorro y, además, debes pagar un ISR del 20%. ¿Cuánto dinero te queda después de cumplir con ambas obligaciones?',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
 
-                    // Opciones
-                    const Text(
-                      'Opciones',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  // Opciones
+                  const Text(
+                    'Opciones',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 10),
-                    Column(
-                      children: _options.asMap().entries.map((entry) {
-                        int idx = entry.key;
-                        String text = entry.value;
-                        return GestureDetector(
-                          onTap: () =>
-                              _selectOption(idx), // Selecciona la opción
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: _selectedOption == idx
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.8)
-                                  : const Color(
-                                      0x84131B44), // Color con 52% de opacidad
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Center(
-                              child: Text(
-                                text,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                ),
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    children: _options.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      String text = entry.value;
+                      return GestureDetector(
+                        onTap: () => _selectOption(idx), // Selecciona la opción
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: _selectedOption == idx
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.8)
+                                : const Color(
+                                    0x84131B44), // Color con 52% de opacidad
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Center(
+                            child: Text(
+                              text,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
                               ),
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 30),
 
-            // Botón de comprobar
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _checkAnswer, // Comprobar respuesta
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primary, // Color del botón
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100),
+                  // Botón de comprobar
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _checkAnswer, // Comprobar respuesta
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primary, // Color del botón
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      child: const Text(
+                        'Comprobar',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Comprobar',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
