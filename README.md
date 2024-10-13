@@ -95,3 +95,6 @@ flutter run
 ## Diagrama de componentes
 
 ![Componentes](Components.png)
+
+##Presentación
+https://www.canva.com/design/DAGTdYbcQt0/L43cO22or4kQRgYbJ1ujmg/edit?utm_content=DAGTdYbcQt0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
