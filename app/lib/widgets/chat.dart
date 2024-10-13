@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; // Añadido para hacer solicitudes HTTP
+import 'dart:convert'; // Para manejar JSON
+import '../config.dart';
 
 class ChatButton extends StatefulWidget {
   const ChatButton({Key? key}) : super(key: key);
@@ -11,6 +14,12 @@ class ChatButtonState extends State<ChatButton> {
   final List<Map<String, String>> messages = [];
   final TextEditingController textController = TextEditingController();
   final ScrollController scrollController = ScrollController();
+
+  // URL de la API
+  final String apiUrl = "http://172.31.98.243:3000/api/chat/learn";
+
+  // Variable para manejar el estado de carga
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +90,20 @@ class ChatButtonState extends State<ChatButton> {
                       Expanded(
                         child: ListView.builder(
                           controller: scrollController,
-                          itemCount: messages.length,
+                          itemCount: messages.length +
+                              (isLoading
+                                  ? 1
+                                  : 0), // Añadimos 1 si está cargando
                           itemBuilder: (context, index) {
+                            if (index == messages.length && isLoading) {
+                              // Mostrar el indicador de progreso
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
                             bool isUserMessage =
                                 messages[index]['sender'] == 'user';
                             return Align(
@@ -96,7 +117,8 @@ class ChatButtonState extends State<ChatButton> {
                                 decoration: BoxDecoration(
                                   color: isUserMessage
                                       ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.surface,
+                                      : Colors.grey[
+                                          300], // Fondo gris para los mensajes del chatbot
                                   borderRadius: BorderRadius.only(
                                     topLeft: const Radius.circular(20),
                                     topRight: const Radius.circular(20),
@@ -146,9 +168,18 @@ class ChatButtonState extends State<ChatButton> {
                             FloatingActionButton(
                               onPressed: () {
                                 if (textController.text.isNotEmpty) {
-                                  _sendMessage(
-                                      textController.text, setModalState);
-                                  textController.clear();
+                                  // Accede al token desde Config
+                                  String? token = Config.token;
+
+                                  if (token != null && token.isNotEmpty) {
+                                    _sendMessage(textController.text, token,
+                                        setModalState);
+                                    textController.clear();
+                                  } else {
+                                    // Manejo en caso de que el token no esté disponible
+                                    print(
+                                        "Error: No se encontró un token válido.");
+                                  }
                                 }
                               },
                               mini: true,
@@ -174,35 +205,62 @@ class ChatButtonState extends State<ChatButton> {
   }
 
   // Función para enviar el mensaje y actualizar el modal
-  void _sendMessage(String message, StateSetter setModalState) {
+  void _sendMessage(String message, String token, StateSetter setModalState) {
     print("Sending message: $message");
     setModalState(() {
       messages.add({"sender": "user", "message": message});
+      isLoading = true; // Iniciamos la carga
     });
     _scrollToBottom();
-    _chatbotResponse(message, setModalState);
+    _callApiAndGetResponse(
+        message, token, setModalState); // Llamada a la API con el token
   }
 
-  // Simulación de respuesta del chatbot y actualización en el modal
-  void _chatbotResponse(String userMessage, StateSetter setModalState) {
-    print("User message received: $userMessage");
-    Future.delayed(const Duration(seconds: 1), () {
-      String response = '';
-      if (userMessage.toLowerCase() == 'hola') {
-        response = 'Hola, ¿cómo te puedo ayudar hoy?';
-      } else if (userMessage.toLowerCase().contains('presupuesto')) {
-        response =
-            'Para hacer un presupuesto mensual con un salario de 35,000 pesos, primero identifica tus gastos fijos como renta, servicios y alimentación. Luego, aparta un porcentaje para el ahorro, idealmente un 20%. El resto se puede distribuir en entretenimiento, transporte, y otros gastos variables. Es importante registrar todos los gastos y revisar el presupuesto cada mes.';
-      } else {
-        response = 'Lo siento, no entiendo tu mensaje. ¿Puedes repetirlo?';
-      }
+  // Función para llamar a la API y obtener la respuesta
+  Future<void> _callApiAndGetResponse(
+      String userMessage, String token, StateSetter setModalState) async {
+    try {
+      // Hacer una solicitud POST a la API con el token en el encabezado
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Añadimos el token al header
+        },
+        body: jsonEncode({'prompt': userMessage}),
+      );
 
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        String botResponse =
+            data['response'] ?? 'Lo siento, no entiendo tu mensaje.';
+        print("Chatbot response: $botResponse");
+
+        setModalState(() {
+          messages.add({"sender": "bot", "message": botResponse});
+          isLoading = false; // Detenemos la carga cuando recibimos la respuesta
+        });
+      } else {
+        setModalState(() {
+          messages.add({
+            "sender": "bot",
+            "message":
+                "Hubo un error al procesar tu mensaje. Inténtalo de nuevo."
+          });
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error al llamar a la API: $e");
       setModalState(() {
-        messages.add({"sender": "bot", "message": response});
-        print("Chatbot response: $response");
+        messages.add({
+          "sender": "bot",
+          "message": "Ocurrió un error de red. Inténtalo más tarde."
+        });
+        isLoading = false;
       });
-      _scrollToBottom();
-    });
+    }
+    _scrollToBottom();
   }
 
   // Función para hacer scroll al último mensaje
