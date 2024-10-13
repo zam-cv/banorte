@@ -1,10 +1,11 @@
+#Conexión con la base de datos de Firebase
 from google.cloud import firestore
-
+#Declarar la base de datos
 db = firestore.Client(project='gcp-banorte-hackaton-team-5', database='hack-banorte')
 
 doc_ref = db.collection(u'user_data').document(u'B0nDZBfLZrqkcT1eycX4')
 
-
+#Función para obtener todos los datos de la base de datos
 def get_specific_data(in_user_email: str):
     doc_ref = db.collection(u'user_data').stream()
     for doc in doc_ref:
@@ -12,7 +13,8 @@ def get_specific_data(in_user_email: str):
         if doc_dict['email'] == in_user_email:
             doc_dict['id'] = doc.id
             return doc_dict
-        
+
+#Función para obtener todos los datos de la base de datos
 def reference_data():
     data: dict = {}
     for doc in db.collection(u'user_data').stream():
@@ -20,12 +22,14 @@ def reference_data():
         data[values['email']] = values
     return data
 
+#Función para actualizar el streak de un usuario
 def update_streak(in_user_email: str, in_streak: int):
     data=get_specific_data(in_user_email)
     doc_ref = db.collection(u'user_data').document(data['id'])
     doc_ref.update({'streak': in_streak})
     print(f'Document {doc_ref.id} updated successfully.')
-
+    
+#Función para calificar a un usuario
 def grade_user(in_user_email: str):
     user_data = get_specific_data(in_user_email)
     if user_data['streak'] <= 3:
@@ -34,7 +38,8 @@ def grade_user(in_user_email: str):
         return 'Conocimiento medio'
     else:
         return 'Conocimiento avanzado'
-    
+
+#Función para obtener el contexto de un usuario 
 def user_context(in_user_email: str) -> str:
     data = get_specific_data(in_user_email)
     user_context = "sin datos"
@@ -46,7 +51,9 @@ def user_context(in_user_email: str) -> str:
         print('KeyError')
     return user_context
 
-
+###
+# Test de las funciones
+###
 if __name__ == '__main__':
 
     print(grade_user('a01749675@tec.mx'))
