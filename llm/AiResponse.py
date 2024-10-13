@@ -59,6 +59,9 @@ class Objective(enum.Enum):
     '''
     GAME_BANORTE_AI = '''
                     Eres BanorteAI, un asistente virtual de Banorte especializado en educación financiera. 
+                    BanorteGameAi es un juego de educación financiera en el que los usuarios pueden aprender sobre finanzas personales de una manera interactiva y divertida. 
+                    Ellos serán presentados con preguntas y desafíos relacionados con conceptos financieros, estrategias de ahorro, inversión y manejo de deudas. 
+                    tu misión es ayudar a los usuarios a mejorar su conocimiento financiero y a tomar decisiones informadas sobre su dinero.
                     Eres el asistente de la aplicación de educación financiera de Banorte. 
                     Un usuario está jugando un juego sobre educación financiera. 
                     Es tu deber guiarlo y darle retroalimentación sobre su progreso.
@@ -113,6 +116,16 @@ class Objective(enum.Enum):
             "options": ["option1", "option2", "option3", "option4"],
             "correct_answer": "correct option"
         }
+    
+    '''
+    
+    CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE = '''
+    
+        You are a text summarizer and categorizer AI.
+        Your objective is to summarize and categorize the context data that you receive.
+        You'l receive a huge file with web scraping data about Banorte, you must analyze this data, summarize it and categorize it.
+        When you categorize it, you must still explain in depth the concepts, as this will be used to generate content for the BanorteAI.
+    
     
     '''
         
@@ -204,6 +217,27 @@ class AiRequests():
             return "Context data not found."
         except UnicodeDecodeError:
             return "Error decoding the context data."
+        
+    def set_context_data(self,context:str)->None:
+        '''This method is used to set the context data to the Output.txt file.'''
+        with open('Output.txt', 'w', encoding='utf-8') as file:
+            file.write(context)
+            
+    def segment_context_data(self)->list:
+        '''This method is used to segment the context data. It returns a list with the segmented context data.'''
+        self.contents = []
+        information = self.get_context_data()
+        self.contents.append(information)
+        response = self.model.generate_content(
+            self.contents,
+            generation_config=self.generation_config,
+            safety_settings=self.safety_settings,
+            )
+        if response:
+            self.segment_context_data(response.text)
+        
+        return response.text
+        
 
     def make_prompt_with_from_json_use_context(self, context:json)->str:
         '''This method is used to generate content based on the user input and the context given on the json. It returns the response from the AI model.'''
@@ -260,10 +294,14 @@ class AiRequests():
         except ValueError as e:
             print(f"Error generating content: {e}")
             return "Content generation was blocked by safety filters."
+        
+    
     
 if __name__ == "__main__":
     ai = AiRequests(Objective.BANORTE_ASSISTANT,"You must translate to spanish")
     question_ai = AiRequests(Objective.GAME_BANORTE_AI_QUESTION,"You are guiding the player through the game. You must generate questions for the game")
+    
+    ai_summarizer = AiRequests(Objective.CONTEXT_DATA_SUMMARIZER_AND_CATEGORIZE,"You must summarize and categorize the context data")
     # Example JSON context
     json_context = json.dumps(
         {
@@ -295,3 +333,5 @@ if __name__ == "__main__":
     print(ai.make_prompt_with_from_json_use_context(json_context))
     print("--------------")
     print(question_ai.generate_questions_with_json(json_context))
+    print("--------------")
+    print(ai_summarizer.segment_context_data())

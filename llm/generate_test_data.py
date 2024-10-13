@@ -1,5 +1,5 @@
 import json
-from make_request import AiRequests, Objective
+from llm.AiResponse import AiRequests, Objective
 
 categories = ['prompt', 'category', 'information_context', 'user_context']
 
