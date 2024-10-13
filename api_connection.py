@@ -52,12 +52,10 @@ def create_question(question: Question):
     temp_dict = dict(jsonable_encoder(question))
     temp_dict["model"] = "game_banorte_ai_question"
     print(temp_dict)
-    information_context = VectorialDB("GameBanorteAI",f'Dame información de la categoría {temp_dict["category"]}')
+    information_context = VectorialDB("BanorteDataBase",f'Dame información de la categoría {temp_dict["category"]}')
     information_context.client.connect()
     temp_dict["information_context"] = information_context.query_collection(f'Dame información de la categoría {temp_dict["category"]}')
     information_context.client.connect()
-    print("AAAAAAAAAAAaa")
-    print(temp_dict)
     llm_fast_api = FastApiLLMReceiver(temp_dict)
     result = llm_fast_api.generate_questions()
     return JSONResponse(content=result)
