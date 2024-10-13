@@ -194,14 +194,14 @@ class _SignupState extends State<Signup> {
                         controller:
                             _firstNameController, // Controlador para el campo de nombre.
                         label: "Nombre(s)", // Etiqueta del campo.
-                        hintText: "Carlos Rust", // Texto de ayuda.
+                        hintText: "Nombre", // Texto de ayuda.
                       ),
                       // Campo de texto para los apellidos.
                       CustomInput(
                         controller:
                             _lastNameController, // Controlador para el campo de apellidos.
                         label: 'Apellidos', // Etiqueta del campo.
-                        hintText: 'Carlos Rust', // Texto de ayuda.
+                        hintText: 'Apellido(s)', // Texto de ayuda.
                       ),
                       const SizedBox(height: 15),
                       // Campos personalizados para la fecha de nacimiento.
