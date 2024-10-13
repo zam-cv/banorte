@@ -69,7 +69,7 @@ llm/install_dependencies.sh
 ollama run gemma2:9b
 ```
 
-```
+```bash
 python3 api_connection.py
 ```
 
